@@ -1,0 +1,27 @@
+{
+  "name": "scratch-html5-tester",
+  "version": "0.0.1",
+  "keywords": ["Scratch", "html5", "javascript testing", "bdd", "yadda"],
+  "description": "Testing framework for HTML5 Scratch Player",
+  "repository": { "type": "git", "url": "git://github.com/prokls/scratch-html5-tester" },
+  "licenses": [
+    {
+      "type": "Public Domain"
+    }
+  ],
+  "author": {
+    "name": "Lukas Prokop, Andreas Schulhofer, Richard Schumi",
+    "email": "lukas.prokop@student.tugraz.at"
+  },
+  "main": "bottles-test.js",
+  "scripts": {
+    "test": "mocha --reporter spec --timeout 200000 bottles-test.js"
+  },
+  "dependencies": {
+    "yadda": "0.10.14",
+    "phantom": "0.6.5"
+  },
+  "bugs": {
+    "url": "https://github.com/prokls/scratch-html5-tester/issues"
+  }
+}
