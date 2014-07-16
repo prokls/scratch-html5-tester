@@ -10,7 +10,7 @@ module.exports = (function() {
          ph.createPage(function (page) {
            page.open("http://scratch.mit.edu/", function (status) {
              page.evaluate(function () { return document.title; }, function (result) {
-               assert.assert(result.indexOf("Scratch") !== 0);
+               assert.notEqual(result.indexOf("Scratch") !== 0);
                ph.exit();
                next();
              });
