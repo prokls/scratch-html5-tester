@@ -2,6 +2,6 @@ Feature: 100 Green Bottles
 
 Scenario: Should fall from the wall
 
-   Given loaded project #42
-   When 1 green bottle accidentally falls
-   Then there are 99 green bottles standing on the wall
+   Given loaded project #10000160
+   When this sprite clicked
+   Then costume ballerina-a of sprite fish31 is visible
