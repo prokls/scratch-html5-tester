@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "yadda": "0.10.14",
-    "phantom": "0.6.5"
+    "phantom": "0.6.5",
+    "assert": "1.1.1"
   },
   "bugs": {
     "url": "https://github.com/prokls/scratch-html5-tester/issues"
