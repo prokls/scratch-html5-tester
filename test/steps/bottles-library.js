@@ -2,7 +2,6 @@ var assert = require('assert');
 var phantom = require('phantom');
 var Yadda = require('yadda');
 var English = Yadda.localisation.English;
-var Tester = require('../../lib/scratch-html5-tester/test.js');
 
 // TODO: [^"]+ is not scratch compatible
 var dict = new Yadda.Dictionary()
@@ -23,7 +22,6 @@ module.exports = (function() {
            });
          });
        });
-       wall = new Tester(number);
     })
     .when("this sprite clicked", function(next) {
        console.log("when this sprite clicked!");
