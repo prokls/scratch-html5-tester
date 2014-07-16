@@ -18,7 +18,6 @@ module.exports = (function() {
          });
        });
        wall = new Tester(number);
-       next();
     })
     .when("$NUM green bottle accidentally falls", function(number, next) {
        wall.fall(number);
