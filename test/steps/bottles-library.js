@@ -14,7 +14,7 @@ module.exports = (function() {
     .given("loaded project #$NUM", function(number, next) {
        phantom.create(function (ph) {
          ph.createPage(function (page) {
-           page.open("file:///home/prokls/scratch-html5/index.html#" + number, function (status) {
+           page.open("../scratch-html5/index.html#" + number, function (status) {
              page.evaluate(function () { return document.title; }, function (result) {
                assert.notStrictEqual(result.indexOf("Scratch"), -1);
                ph.exit();
