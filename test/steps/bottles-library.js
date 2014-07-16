@@ -13,8 +13,11 @@ module.exports = (function() {
     .given("loaded project #$NUM", function(number, next) {
        phantom.create(function (ph) {
          ph.createPage(function (page) {
-           page.open("../scratch-html5/index.html#" + number, function (status) {
-             page.evaluate(function () { return document.title; }, function (result) {
+           //page.set('settings.webSecurityEnabled', false);
+           page.open("lib/scratch-html5/index.html#" + number, function (status) {
+             assert(status === "success", "HTML5 Scratch player could not load.\nDid you put the scratch-html5 repository into the lib folder?");
+
+             page.evaluate(function () { console.log(document); return document.title; }, function (result) {
                assert.notStrictEqual(result.indexOf("Scratch"), -1);
                ph.exit();
                next();
