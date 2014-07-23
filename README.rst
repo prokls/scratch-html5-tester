@@ -15,7 +15,7 @@ Install
 2. Download scratch-html5 into `lib/`::
 
     mkdir scratch-html5-tester/lib
-    git clone http://github.com/LLK/scratch-html5.git scratch-html5-tester/lib
+    git clone http://github.com/LLK/scratch-html5.git scratch-html5-tester/lib/scratch-html5
 
 3. Run tests using::
 
