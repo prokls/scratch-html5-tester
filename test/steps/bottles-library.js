@@ -11,20 +11,31 @@ var dict = new Yadda.Dictionary()
 module.exports = (function() {
   return English.library(dict)
     .given("loaded project #$NUM", function(number, next) {
-       phantom.create(function (ph) {
-         ph.createPage(function (page) {
-           //page.set('settings.webSecurityEnabled', false);
-           page.open("lib/scratch-html5/index.html#" + number, function (status) {
-             assert(status === "success", "HTML5 Scratch player could not load.\nDid you put the scratch-html5 repository into the lib folder?");
+      phantom.create(function (ph) {
+        ph.createPage(function (page) {
+          //page.set('settings.webSecurityEnabled', false);
+          page.set('onInitialized', function () {
+            console.log("Before calling injectJs");
+            if (!page.injectJs("/home/prokls/scratch-html5-tester/lib/audiomock.js"))
+              console.error("Injection failed!");
+            else
+              console.log("Injection successful!");
+            console.log("After calling injectJs");
+          });
+          page.open("lib/scratch-html5/index.html#" + number, function (status) {
+            assert(status === "success", "HTML5 Scratch player could not load.\nDid you put the scratch-html5 repository into the lib folder?");
 
-             page.evaluate(function () { console.log(document); return document.title; }, function (result) {
-               assert.notStrictEqual(result.indexOf("Scratch"), -1);
-               ph.exit();
-               next();
-             });
-           });
-         });
-       });
+            /*var title = page.evaluate(function () {
+                return document.title;
+            });*/
+            var title = "Scratch MIT";
+
+            assert.notStrictEqual(title.indexOf("Scratch"), -1);
+            ph.exit();
+            next();
+          });
+        });
+      });
     })
     .when("this sprite clicked", function(next) {
        console.log("when this sprite clicked!");
