@@ -14,43 +14,31 @@ module.exports = (function() {
       phridge
         .spawn()
         .then(function (phantom) {
-          phantom.openPage("http://google.com/").then(function (page) {
-            console.log("Loaded");
-          });
-          /*console.log("Given");
           var page = phantom.createPage();
           page.run(function (resolve, reject) {
             var page = this;
 
             /*page.onInitialized = function () {
+              // this is executed 'after the web page is created but before a URL is loaded.
+              // The callback may be used to change global objects.' ... according to the docs
               page.evaluate(function () {
-                console.log("evaluate");
-                console.log(window);
-                //window.AudioContext = function () {}
-                //page.injectJs("/home/prokls/scratch-html5-tester/lib/audiomock.js")
+                return document.querySelector("h1").innerText;
               });
-            };* /
+            };*/
 
-            this.open("http://google.at", function (status) {
-              if (status !== "success")
-                  return reject(new Error("Cannot load " + this.url));
-
-              console.log("Loaded");
+            page.open("http://example.com", function (status) {
+              if (status !== "success") {
+                return reject();
+              }
+              page.evaluate(function () {
+                console.log(document.querySelector("h1").innerText);
+              });
               resolve();
             });
-
-            /*page.open("lib/scratch-html5/index.html" /*#10000160 * /, function (status) {
-              console.log("Opened!");
-              assert(status === "success", "HTML5 Scratch player could not load.\nDid you put the scratch-html5 repository into the lib folder?");
-
-              var title = "Scratch MIT";
-
-              assert.notStrictEqual(title.indexOf("Scratch"), -1);
-            });* /
-          })*/
+          });
         })
         .finally(phridge.disposeAll)
-        .done(function () { next(); },
+        .done(function () { console.log("Done. Calling next now."); setTimeout(next, 8000); },
           function (err) {
             console.error("Error occured: " + err);
           }
