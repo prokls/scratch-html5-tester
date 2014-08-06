@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "yadda": "0.10.14",
-    "phantom": "0.6.5",
+    "phridge": "0.1.4",
     "assert": "1.1.1"
   },
   "bugs": {
