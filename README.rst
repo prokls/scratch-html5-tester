@@ -2,7 +2,7 @@ Scratch-html5-tester
 ====================
 
 :project:       scratch-html5-tester
-:date:          July 2014
+:date:          July, Aug 2014
 :contributors:  Lukas Prokop, Andreas Schulhofer, Richard Schumi
 
 Install

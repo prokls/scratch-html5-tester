@@ -13,9 +13,9 @@
     "name": "Lukas Prokop, Andreas Schulhofer, Richard Schumi",
     "email": "lukas.prokop@student.tugraz.at"
   },
-  "main": "bottles-test.js",
+  "main": "testsuite.js",
   "scripts": {
-    "test": "mocha --reporter spec --timeout 200000 bottles-test.js"
+    "test": "mocha --reporter spec --timeout 200000 testsuite.js"
   },
   "dependencies": {
     "yadda": "0.10.14",
