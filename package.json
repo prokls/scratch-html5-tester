@@ -18,6 +18,7 @@
     "test": "mocha --reporter spec --timeout 200000 testsuite.js"
   },
   "dependencies": {
+    "mocha": "1.21.4",
     "yadda": "0.10.14",
     "phridge": "0.1.4",
     "assert": "1.1.1"
