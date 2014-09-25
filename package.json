@@ -20,7 +20,9 @@
   "dependencies": {
     "yadda": "0.10.14",
     "phridge": "0.1.4",
-    "assert": "1.1.1"
+    "assert": "1.1.1",
+    "request": "2.40.0"
+    
   },
   "bugs": {
     "url": "https://github.com/prokls/scratch-html5-tester/issues"
