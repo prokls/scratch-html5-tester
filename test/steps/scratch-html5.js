@@ -40,6 +40,77 @@ var Testcase = function () {
          addThen : addThen, serialize : serialize };
 };
 
+function run_phridge(rootpath, testcase, resolve, reject) {
+  // based on https://github.com/ariya/phantomjs/blob/master/examples/waitfor.js
+  var waitFor = function (testFx, onReady, onTimeout, timeOutMillis) {
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000;
+    var start = new Date().getTime();
+    var condition = false;
+    var interval = setInterval(
+      function() {
+        if ((new Date().getTime() - start < maxtimeOutMillis) && !condition) {
+          condition = testFx();
+        } else {
+          if (!condition) {
+            onTimeout();
+            clearInterval(interval);
+          } else {
+            onReady();
+            clearInterval(interval);
+          }
+        }
+      }, 250
+    );
+  };
+
+  var page = this;
+
+  page.onError = function (msg, trace) {
+    console.error(msg);
+    trace.forEach(function (item) {
+      console.log("  ", item.file, ": line", item.line);
+    });
+  };
+
+  page.onConsoleMessage = function (msg, lineno, sourceid) {
+    if (lineno !== undefined && sourceid !== undefined)
+      console.log("console output: " + msg + " (line " + lineno + ") in " + sourceid);
+    else
+      console.log("console output: " + msg);
+  };
+
+  page.onInitialized = function () {
+    page.injectJs(rootpath + '/audiomock.js');
+    page.injectJs(rootpath + '/testframework.js');
+  };
+
+  page.open("lib/scratch-html5/index.html#" + testcase['id'], function (status) {
+    if (status !== 'success')
+      return reject(new Error("Failed to load page " + this.url));
+
+    // TODO: Call page.evaluate every 2 seconds and ask whether
+    //       window.testsuite_finished is true.
+    page.evaluate(function (tc) {
+      window.startTestFramework(tc);
+    }, testcase);
+
+    var wait_timeout = 30000;
+
+    waitFor(function () {
+      return page.evaluate(function () { return window.testsuite_finished; });
+    }, function () {
+      console.log("WHy am I executed?");
+      console.log("testsuite terminated");
+      resolve("testsuite terminated");
+    }, function () {
+      console.log("testsuite did not finish");
+      reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
+    }, wait_timeout);
+  });
+}
+
+
+
 // TODO: [^"]+ is not scratch compatible
 var dict = new Yadda.Dictionary()
     .define('costume', '([^"]+)')
@@ -185,67 +256,23 @@ module.exports = (function() {
 
     .then("costume $costume of sprite $sprite at x:$numeric y:$numeric", function (costume, sprite, x, y, next) {
       test.addThen(['position', costume, sprite]);
-  })
+      next();
+    })
     .then("costume $costume of sprite $sprite is visible", function (costume, sprite, next) {
-    test.addThen(['visible', costume, sprite]);
-      // TODO: next() omitted
+      test.addThen(['visible', costume, sprite]);
 
       var test_serialized = test.serialize();
 
-      return phridge.spawn()
-        .then(function (phantom) {
-          return phantom.createPage();
-        })
-
+      return phridge
+        .spawn()
+        .then(function (phantom) { return phantom.createPage(); })
         .then(function (page) {
           var rootpath = path.resolve(__dirname, '../../lib');
-          return page.run(rootpath, test_serialized,
-            function (rootpath, testcase, resolve, reject) {
-              var page = this;
-
-              page.onError = function (msg, trace) {
-                console.error(msg);
-                trace.forEach(function (item) {
-                  console.log("  ", item.file, ": line", item.line);
-                });
-              };
-
-              page.onConsoleMessage = function (msg, lineno, sourceid) {
-                if (lineno !== undefined && sourceid !== undefined)
-                  console.log("console output: " + msg + " (line " + lineno + ") in " + sourceid);
-                else
-                  console.log("console output: " + msg);
-              };
-
-              page.onInitialized = function () {
-                page.injectJs(rootpath + '/audiomock.js');
-                page.injectJs(rootpath + '/testframework.js');
-              };
-
-              page.open("lib/scratch-html5/index.html#" + testcase['id'], function (status) {
-				if (status !== 'success')
-				  return reject(new Error("Failed to load page " + this.url));
-
-				// TODO: Call page.evaluate every 2 seconds and ask whether
-				//       window.testsuite_finished is true.
-                return page.evaluate(function (tc) {
-				window.startTestFramework(tc);
-                  return document.querySelector("h1").innerText;
-                }, testcase);
-              });
-
-              setTimeout(function () { resolve("resolve") }, 9000);
-            });
-          }
-        )
+          return page.run(rootpath, test_serialized, run_phridge);
+        })
 
        .finally(phridge.disposeAll)
-       .done(function (text) {
-         console.log("Headline on index.html: '%s'", text);
-         next();
-       }, function (err) {
-         throw err;
-       });
-
-  })
+       .done(function () { next(); },
+             function (err) { throw err; });
+    })
 })();
