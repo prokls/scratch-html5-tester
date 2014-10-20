@@ -88,20 +88,23 @@ function run_phridge(rootpath, testcase, resolve, reject) {
     if (status !== 'success')
       return reject(new Error("Failed to load page " + this.url));
 
-    // TODO: Call page.evaluate every 2 seconds and ask whether
-    //       window.testsuite_finished is true.
+    // Call page.evaluate every 250 milliseconds and ask whether
+    // runner.hasFinished is true.
     page.evaluate(function (tc) {
-      window.startTestFramework(tc);
+      window.runner.receiveTestcaseSpec(tc);
     }, testcase);
 
     var wait_timeout = 30000;
 
     waitFor(function () {
-      return page.evaluate(function () { return window.testsuite_finished; });
+      return page.evaluate(function () { return window.runner.hasFinished(); });
     }, function () {
-      console.log("WHy am I executed?");
       console.log("testsuite terminated");
-      resolve("testsuite terminated");
+      var success = page.evaluate(function () { return window.runner.hasSucceeded(); });
+      if (success)
+        resolve("testsuite terminated successfully");
+      else
+        reject(new Error("Condition unsatisfied"));
     }, function () {
       console.log("testsuite did not finish");
       reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));

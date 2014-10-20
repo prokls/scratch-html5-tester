@@ -2,6 +2,7 @@ Feature: 100 Green Bottles
 
 Scenario: Should fall from the wall
 
-   Given loaded project #26894955
+   Given loaded project #30552428
     When green flag clicked
-    Then costume lioness of sprite Lionness is visible
+     And show
+    Then costume bat2-a of sprite Bat2 is visible
