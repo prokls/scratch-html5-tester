@@ -27,7 +27,7 @@ var Testcase = function () {
   var addThen = function (lst) {
     then.push(lst);
   };
-
+  
   var serialize = function () {
     return {
       'id' : projectId,
@@ -141,9 +141,11 @@ var dict = new Yadda.Dictionary()
 // operators 
 
 module.exports = (function() {
-  var test = new Testcase();
+  
+  var test;// = new Testcase();
   return English.library(dict)
     .given("loaded project #$NUM", function(num, next) {
+	  test = new Testcase();
       test.addProjectId(num);
       next();
     })
@@ -154,7 +156,7 @@ module.exports = (function() {
     .when("this sprite is clicked", function (next) { test.addWhen(['whenClicked']); next(); })
     .when("backdrop switches to $backdrop", function (next) { test.addWhen(['whenSceneStarts']); next(); })
     .when("$sensor > $numeric", function (sensor, num, next) { test.addWhen(['whenSensorGreaterThan', sensor, parseInt(num)]); next(); })
-    .when('I receive "$text"', function (next) { test.addWhen(['whenIReceive']); next(); })
+    .when('I receive "$text"', function (text, next) { test.addWhen(['whenIReceive', text]); next(); })
     .when('broadcast "$text"', function (text, next) { test.addWhen(['broadcast:', text]); next(); })
     .when('broadcast "$text" and wait', function (text, next) { test.addWhen(['doBroadcastAndWait', text]); next(); })
     .when("I start as a clone", function (next) { test.addWhen(['whenCloned']); next(); })
@@ -263,9 +265,9 @@ module.exports = (function() {
     })
     .then("costume $costume of sprite $sprite is visible", function (costume, sprite, next) {
       test.addThen(['visible', costume, sprite]);
-
+      
       var test_serialized = test.serialize();
-
+      
       return phridge
         .spawn()
         .then(function (phantom) { return phantom.createPage(); })
