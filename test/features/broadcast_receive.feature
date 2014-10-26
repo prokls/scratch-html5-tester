@@ -1,6 +1,6 @@
 Feature: Testcase 3 
 
-Scenario: Broadcast receive and show
+Scenario: receive broadcast and show
 
    Given loaded project #30887308
     When broadcast "TestBroadcast"

@@ -1,4 +1,4 @@
-Feature: 100 Green Bottles
+Feature: Testcase 2
 
 Scenario: change costume
 
