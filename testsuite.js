@@ -4,10 +4,27 @@
  * This file invokes Yadda for every feature file.
  */
 var Yadda = require('yadda');
+var path = require('path');
 
 Yadda.plugins.mocha.AsyncStepLevelPlugin.init();
 
+function filtered(current) {
+  // TODO: use --file or --feature instead. --grep is not supported in any way
+  for (var i = 0; i < process.argv.length; i++) {
+    if (process.argv[i] == '--grep') {
+      var path1 = path.resolve(__dirname, process.argv[parseInt(i + 1)]);
+      var path2 = path.resolve(__dirname, current);
+      return path1 == path2;
+    }
+  }
+  return true;
+}
+
+
 new Yadda.FeatureFileSearch('./test/features').each(function(file) {
+
+  if (!filtered(file))
+    return;
 
   featureFile(file, function(feature) {
     var library = require('./test/steps/scratch-html5');
