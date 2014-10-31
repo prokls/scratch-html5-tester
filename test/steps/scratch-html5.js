@@ -112,6 +112,21 @@ function run_phridge(rootpath, testcase, resolve, reject) {
   });
 }
 
+function run_phantom_js(test, next) {
+  var test_serialized = test.serialize();
+
+  return phridge
+	.spawn()
+	.then(function (phantom) { return phantom.createPage(); })
+	.then(function (page) {
+	  var rootpath = path.resolve(__dirname, '../../lib');
+	  return page.run(rootpath, test_serialized, run_phridge);
+	})
+
+   .finally(phridge.disposeAll)
+   .done(function () { next(); },
+		 function (err) { throw err; });
+}
 
 
 // TODO: [^"]+ is not scratch compatible
@@ -263,21 +278,12 @@ module.exports = (function() {
       test.addThen(['position', costume, sprite]);
       next();
     })
+    .then("costume $costume of sprite $sprite is hidden", function (costume, sprite, next) {
+      test.addThen(['hidden', costume, sprite]);
+      run_phantom_js(test, next);
+    })
     .then("costume $costume of sprite $sprite is visible", function (costume, sprite, next) {
       test.addThen(['visible', costume, sprite]);
-      
-      var test_serialized = test.serialize();
-      
-      return phridge
-        .spawn()
-        .then(function (phantom) { return phantom.createPage(); })
-        .then(function (page) {
-          var rootpath = path.resolve(__dirname, '../../lib');
-          return page.run(rootpath, test_serialized, run_phridge);
-        })
-
-       .finally(phridge.disposeAll)
-       .done(function () { next(); },
-             function (err) { throw err; });
+      run_phantom_js(test, next);
     })
 })();
