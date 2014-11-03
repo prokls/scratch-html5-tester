@@ -101,10 +101,11 @@ function run_phridge(rootpath, testcase, resolve, reject) {
     }, function () {
       console.log("testsuite terminated");
       var success = page.evaluate(function () { return window.runner.hasSucceeded(); });
+      var errmsg = page.evaluate(function () { return window.runner.lastErrorMessage(); });
       if (success)
         resolve("testsuite terminated successfully");
       else
-        reject(new Error("Condition unsatisfied"));
+        reject(new Error("Condition unsatisfied" + (errmsg ? ": " + errmsg : "")));
     }, function () {
       console.log("testsuite did not finish");
       reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
@@ -274,9 +275,9 @@ module.exports = (function() {
     .when("show list $list", function (list, next) { test.addWhen(["showList:", list]); next(); })
     .when("hide list $list", function (list, next) { test.addWhen(["hideList:", list]); next(); })
 
-    .then("costume $costume of sprite $sprite at x:$numeric y:$numeric", function (costume, sprite, x, y, next) {
-      test.addThen(['position', costume, sprite]);
-      next();
+    .then("costume $costume of sprite $sprite at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
+      test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
+      run_phantom_js(test, next);
     })
     .then("costume $costume of sprite $sprite is hidden", function (costume, sprite, next) {
       test.addThen(['hidden', costume, sprite]);
