@@ -11,9 +11,9 @@ Yadda.plugins.mocha.AsyncStepLevelPlugin.init();
 function filtered(current) {
   // TODO: use --file or --feature instead. --grep is not supported in any way
   for (var i = 0; i < process.argv.length; i++) {
-    if (process.argv[i] == '--grep') {
-      var path1 = path.resolve(__dirname, process.argv[parseInt(i + 1)]);
-      var path2 = path.resolve(__dirname, current);
+    if (process.argv[i] == '--file') {
+      var path1 = path.resolve(__dirname, process.argv[i + 1]);
+      var path2 = path.resolve(__dirname, path.basename(current));
       return path1 == path2;
     }
   }
