@@ -288,13 +288,15 @@ module.exports = (function() {
       run_phantom_js(test, next);
     })
     .then("size of costume $costume of sprite $sprite is $size percent", function (costume, sprite, size, next) {
-      console.log("then size percentage" + costume + " - " + sprite + ": " + size);
       test.addThen(['size_percentage', costume, sprite, parseInt(size)]);
       run_phantom_js(test, next);
     })
     .then("size of costume $costume of sprite $sprite is width:$width height:$height", function (costume, sprite, width, height, next) {
-      console.log("then size" + costume + " - " + sprite + ": " + width + " - " + height);
       test.addThen(['size', costume, sprite, parseInt(width), parseInt(height)]);
+      run_phantom_js(test, next);
+    })
+    .then("rotation of costume $costume of sprite $sprite is $rot", function (costume, sprite, rot, next) {
+      test.addThen(['rotation', costume, sprite, parseInt(rot)]);
       run_phantom_js(test, next);
     })
 })();
