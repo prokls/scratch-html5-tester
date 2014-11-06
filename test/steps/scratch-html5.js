@@ -2,6 +2,8 @@
 // Main implementation of feature-file execution
 //
 
+"use strict";
+
 var assert = require('assert');
 var request = require('request');
 var Yadda = require('yadda');
@@ -80,6 +82,14 @@ function run_phridge(rootpath, testcase, resolve, reject) {
   };
 
   page.onInitialized = function () {
+    page.addCookie({
+      'name'     : 'iomock_project_base',
+      'value'    : 'file://' + rootpath + '/../test/projects/',
+      'path'     : '/',
+      'httponly' : false,
+      'secure'   : false,
+      'expires'  : (new Date()).getTime() + (1000 * 60 * 60)
+    });
     page.injectJs(rootpath + '/audiomock.js');
     page.injectJs(rootpath + '/testframework.js');
   };
@@ -112,7 +122,7 @@ function run_phridge(rootpath, testcase, resolve, reject) {
   });
 }
 
-function run_phantom_js(test, next) {
+  function run_phantom_js(test, next) {
   var test_serialized = test.serialize();
 
   return phridge
