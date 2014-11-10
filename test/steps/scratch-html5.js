@@ -299,4 +299,8 @@ module.exports = (function() {
       test.addThen(['rotation', costume, sprite, parseInt(rot)]);
       run_phantom_js(test, next);
     })
+    .then("variable $variable is $val", function (variable, val, next) {
+      test.addThen(['variable', variable, val]);
+      run_phantom_js(test, next);
+    })
 })();
