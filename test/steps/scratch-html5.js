@@ -165,17 +165,17 @@ module.exports = (function() {
       test.addProjectId(num);
       next();
     })
-    .when("green flag clicked", function (next) { test.addWhen(['whenGreenFlag']); next(); })
+    .when("when green flag clicked", function (next) { test.addWhen(['whenGreenFlag']); next(); })
     //.when("block (\w+) is run", function (blockname, next) { test.addWhen(['blockRun', blockname]); next(); })
     //.when("$sprite is clicked", function (spr, next) { test.addWhen(['whenClicked', spr]); next(); }) // custom
-    .when("$key key pressed", function (key, next) { test.addWhen(['whenKeyPressed', key]); next(); })
-    .when("this sprite is clicked", function (next) { test.addWhen(['whenClicked']); next(); })
-    .when("backdrop switches to $backdrop", function (backdrop, next) { test.addWhen(['whenSceneStarts'], backdrop); next(); })
-    .when("$sensor > $numeric", function (sensor, numeric, next) { test.addWhen(['whenSensorGreaterThan', sensor, parseInt(numeric)]); next(); })
-    .when('I receive "$text"', function (text, next) { test.addWhen(['whenIReceive', text]); next(); })
+    .when("when $key key pressed", function (key, next) { test.addWhen(['whenKeyPressed', key]); next(); })
+    .when("when this sprite is clicked", function (next) { test.addWhen(['whenClicked']); next(); })
+    .when("when backdrop switches to $backdrop", function (backdrop, next) { test.addWhen(['whenSceneStarts'], backdrop); next(); })
+    .when("when $sensor > $numeric", function (sensor, numeric, next) { test.addWhen(['whenSensorGreaterThan', sensor, parseInt(numeric)]); next(); })
+    .when('when I receive "$text"', function (text, next) { test.addWhen(['whenIReceive', text]); next(); })
     .when('broadcast "$text"', function (text, next) { test.addWhen(['broadcast:', text]); next(); })
     .when('broadcast "$text" and wait', function (text, next) { test.addWhen(['doBroadcastAndWait', text]); next(); })
-    .when("I start as a clone", function (next) { test.addWhen(['whenCloned']); next(); })
+    .when("when I start as a clone", function (next) { test.addWhen(['whenCloned']); next(); })
     .when("if $cond then", function (cond, next) { test.addWhen(['doIf', cond]); next(); }) // TODO: $cond
     .when("repeat $times", function (times, next) { test.addWhen(['doRepeat', parseInt(times)]); next(); })
     .when("forever", function (next) { test.addWhen(['doForever']); next(); })
@@ -275,7 +275,7 @@ module.exports = (function() {
     .when("show list $list", function (list, next) { test.addWhen(["showList:", list]); next(); })
     .when("hide list $list", function (list, next) { test.addWhen(["hideList:", list]); next(); })
 
-    .then("costume $costume of sprite $sprite at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
+    .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
       run_phantom_js(test, next);
     })
@@ -287,15 +287,15 @@ module.exports = (function() {
       test.addThen(['visible', costume, sprite]);
       run_phantom_js(test, next);
     })
-    .then("size of costume $costume of sprite $sprite is $size percent", function (costume, sprite, size, next) {
+    .then("costume $costume of sprite $sprite has size $size percent", function (costume, sprite, size, next) {
       test.addThen(['size_percentage', costume, sprite, parseInt(size)]);
       run_phantom_js(test, next);
     })
-    .then("size of costume $costume of sprite $sprite is width:$width height:$height", function (costume, sprite, width, height, next) {
+    .then("costume $costume of sprite $sprite has size width:$width height:$height", function (costume, sprite, width, height, next) {
       test.addThen(['size', costume, sprite, parseInt(width), parseInt(height)]);
       run_phantom_js(test, next);
     })
-    .then("rotation of costume $costume of sprite $sprite is $rot", function (costume, sprite, rot, next) {
+    .then("costume $costume of sprite $sprite is rotated by $rot degrees", function (costume, sprite, rot, next) {
       test.addThen(['rotation', costume, sprite, parseInt(rot)]);
       run_phantom_js(test, next);
     })
