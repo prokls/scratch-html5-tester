@@ -10,6 +10,7 @@ var Yadda = require('yadda');
 var phridge = require('phridge');
 var English = Yadda.localisation.English;
 var path = require('path');
+var fs = require('fs');
 
 // Testcase object to collect testcase data
 
@@ -125,8 +126,17 @@ function run_phantom_js(test, next) {
 	.then(function (phantom) { return phantom.createPage(); })
 	.then(function (page) {
 	  var rootpath = path.resolve(__dirname, '../../lib');
-    var projectbasepath = 'file://' + path.resolve(__dirname + '/../projects/') + '/';
-	  return page.run(rootpath, projectbasepath, test_serialized, run_phridge);
+    var projectbasepath = path.resolve(__dirname + '/../projects/');
+    var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
+
+    fs.exists(projectjsonfile, function(exists) {
+      if (!exists)
+        console.log("The json file of project " + test_serialized.id
+              + " does not exist. Run 'node fetchProject "
+              + test_serialized.id + "' to load the project file and its resources." );
+    });
+    
+	  return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
 	})
 
    .finally(phridge.disposeAll)
