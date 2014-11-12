@@ -3,7 +3,7 @@
 var request = require("request");
 var fs      = require('fs');
 var http    = require('http');
-var child_process = require('child_process');
+var zlib    = require('zlib');
 
 if(process.argv.length < 3) {
   console.log("Usage:");
@@ -25,30 +25,33 @@ var loadAsset = function(filename) {
     hostname: asset_base_host,
     port: 80,
     path: asset_base_path + filename + asset_path_suffix,
-    method: 'GET',
-    headers: { 'accept-encoding':'gzip,deflate' }
   };
 
-  http.get(options, function(res){
-    var body = '';
-    res.setEncoding('binary');
+  var request = http.get(options);
 
-    res.on('data', function(chunk){
-      body += chunk;
+  request.on('response', function(response) {
+    var output = fs.createWriteStream(__dirname + '/test/projects/' + filename);
+
+    switch (response.headers['content-encoding']) {
+      case 'gzip':
+        response.pipe(zlib.createGunzip()).pipe(output);
+        break;
+      case 'deflate':
+        response.pipe(zlib.createInflate()).pipe(output);
+        break;
+      default:
+        response.pipe(output);
+        break;
+    }
+
+    response.on('end', function() {
+      console.log(filename + " saved.");
     });
 
-    res.on('end', function(){
-      fs.writeFile(__dirname + '/test/projects/' + filename, body, 'binary', function(err) {
-          if (err) throw err
-          console.log(filename + ' saved.');
-      });
-    });
   });
-
 };
 
 var projectFetchCallback = function (error, response, body) {
-//  if (!error && response.statusCode === 200) {
   if (error || response.statusCode !== 200) throw new Error("Could not fetch project.");
 
   //fetch and store assets
@@ -74,7 +77,6 @@ var projectFetchCallback = function (error, response, body) {
       console.log(projectId + ".json saved");
     }
   });
-//  }
 };
 
 request({
