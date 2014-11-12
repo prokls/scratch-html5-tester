@@ -29,7 +29,7 @@ var Testcase = function () {
   var addThen = function (lst) {
     then.push(lst);
   };
-  
+
   var serialize = function () {
     return {
       'id' : projectId,
@@ -42,7 +42,7 @@ var Testcase = function () {
          addThen : addThen, serialize : serialize };
 };
 
-function run_phridge(rootpath, testcase, resolve, reject) {
+function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   // based on https://github.com/ariya/phantomjs/blob/master/examples/waitfor.js
   var waitFor = function (testFx, onReady, onTimeout, timeOutMillis) {
     var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000;
@@ -82,14 +82,9 @@ function run_phridge(rootpath, testcase, resolve, reject) {
   };
 
   page.onInitialized = function () {
-    page.addCookie({
-      'name'     : 'iomock_project_base',
-      'value'    : 'file://' + rootpath + '/../test/projects/',
-      'path'     : '/',
-      'httponly' : false,
-      'secure'   : false,
-      'expires'  : (new Date()).getTime() + (1000 * 60 * 60)
-    });
+    page.evaluate(function(basepath){
+      window.projectbasepath = basepath;
+    }, projectbasepath);
     page.injectJs(rootpath + '/audiomock.js');
     page.injectJs(rootpath + '/testframework.js');
   };
@@ -122,7 +117,7 @@ function run_phridge(rootpath, testcase, resolve, reject) {
   });
 }
 
-  function run_phantom_js(test, next) {
+function run_phantom_js(test, next) {
   var test_serialized = test.serialize();
 
   return phridge
@@ -130,7 +125,8 @@ function run_phridge(rootpath, testcase, resolve, reject) {
 	.then(function (phantom) { return phantom.createPage(); })
 	.then(function (page) {
 	  var rootpath = path.resolve(__dirname, '../../lib');
-	  return page.run(rootpath, test_serialized, run_phridge);
+    var projectbasepath = 'file://' + path.resolve(__dirname + '/../projects/') + '/';
+	  return page.run(rootpath, projectbasepath, test_serialized, run_phridge);
 	})
 
    .finally(phridge.disposeAll)
@@ -170,8 +166,8 @@ module.exports = (function() {
   var test;// = new Testcase();
   return English.library(dict)
     .given("loaded project #$NUM", function(num, next) {
-	  test = new Testcase();
-      test.addProjectId(num);
+    test = new Testcase();
+    test.addProjectId(num);
       next();
     })
     .when("green flag clicked", function (next) { test.addWhen(['whenGreenFlag']); next(); })
