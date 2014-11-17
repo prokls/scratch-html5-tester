@@ -300,7 +300,7 @@ module.exports = (function() {
       run_phantom_js(test, next);
     })
     .then("variable $variable is $val", function (variable, val, next) {
-      test.addThen(['variable', variable, val]);
+      test.addThen(['variable', 'Stage', variable, val]);
       run_phantom_js(test, next);
     })
 })();
