@@ -18,12 +18,13 @@
     "test": "mocha --reporter spec --timeout 200000 testsuite.js"
   },
   "dependencies": {
-    "mocha": "1.21.4",
-    "yadda": "0.11.2",
-    "phridge": "1.0.6",
     "assert": "1.1.2",
-    "request": "2.44.0"
-    
+    "mocha": "1.21.4",
+    "phridge": "1.0.6",
+    "promisepipe": "^1.0.1",
+    "q": "^1.1.1",
+    "request": "2.44.0",
+    "yadda": "0.11.2"
   },
   "bugs": {
     "url": "https://github.com/prokls/scratch-html5-tester/issues"
