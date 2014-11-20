@@ -121,28 +121,34 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
 function run_phantom_js(test, next) {
   var test_serialized = test.serialize();
+  var rootpath        = path.resolve(__dirname, '../../lib');
+  var projectbasepath = path.resolve(__dirname + '/../projects') + '/';
+  var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
 
-  return phridge
-	.spawn()
-	.then(function (phantom) { return phantom.createPage(); })
-	.then(function (page) {
-	  var rootpath = path.resolve(__dirname, '../../lib');
-    var projectbasepath = path.resolve(__dirname + '/../projects/');
-    var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
+  var promises = [];
 
-    fs.exists(projectjsonfile, function(exists) {
-      if (!exists)
-        console.log("The json file of project " + test_serialized.id
-              + " does not exist. Run 'node fetchProject "
-              + test_serialized.id + "' to load the project file and its resources." );
-    });
-    
-	  return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
-	})
+  promises.push(
+    phridge
+      .spawn()
+      .then(function (phantom) { return phantom.createPage(); })
+  );
 
-   .finally(phridge.disposeAll)
-   .done(function () { next(); },
-		 function (err) { throw err; });
+  if (!fs.existsSync(projectjsonfile)) {
+    var projectfetcher = require('../../lib/projectfetcher.js');
+    console.log("Project files missing... Start project fetcher");
+    promises.push(
+      projectfetcher.fetchProject(test_serialized.id, projectbasepath)
+    );
+  }
+
+  return require('q').all(promises)
+    .then(function(results) {
+        var page = results[0];
+        return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
+    })
+    .finally(phridge.disposeAll)
+    .done(function () { next(); },
+      function (err) { throw err; });
 }
 
 
