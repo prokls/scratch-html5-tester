@@ -16,15 +16,20 @@ var fs = require('fs');
 
 var Testcase = function () {
   var projectId;
-  var when = [];
+  var when = {};
   var then = [];
+  var currentSprite = "Stage";
 
   var addProjectId = function (id) {
     projectId = id;
   };
 
   var addWhen = function (lst) {
-    when.push(lst);
+    if (when[currentSprite] === undefined) {
+      when[currentSprite] = [lst];
+    } else {
+      when[currentSprite].push(lst);
+    }
   };
 
   var addThen = function (lst) {
@@ -39,8 +44,12 @@ var Testcase = function () {
     };
   };
 
+  var setCurrentSprite = function(sprite) {
+    currentSprite = sprite;
+  };
+
   return { addProjectId : addProjectId, addWhen : addWhen,
-         addThen : addThen, serialize : serialize };
+         addThen : addThen, serialize : serialize, setCurrentSprite : setCurrentSprite};
 };
 
 function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
@@ -296,6 +305,7 @@ module.exports = (function() {
     .when("replace item random of $list with $text", function (list, text, next) { test.addWhen(["setLine:ofList:to:", 'random', text, list]); next(); })
     .when("show list $list", function (list, next) { test.addWhen(["showList:", list]); next(); })
     .when("hide list $list", function (list, next) { test.addWhen(["hideList:", list]); next(); })
+    .when("using $sprite", function (sprite, next) { test.setCurrentSprite(sprite); next(); })
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
