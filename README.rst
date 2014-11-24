@@ -16,7 +16,7 @@ Install
 
     git clone http://github.com/LLK/scratch-html5.git scratch-html5-tester/lib/scratch-html5
 
-3. Install dependencies
+3. Install dependencies::
 
     cd scratch-html5-tester.git && npm install
 
