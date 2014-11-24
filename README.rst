@@ -18,8 +18,7 @@ Install
 
 3. Install dependencies
 
-    cd scratch-html5-tester.git
-    npm install
+    cd scratch-html5-tester.git && npm install
 
 4. Run tests using::
 
