@@ -319,6 +319,14 @@ module.exports = (function() {
       test.addThen(['visible', costume, sprite]);
       run_phantom_js(test, next);
     })
+    .then("sprite $sprite is visible", function (sprite, next) {
+      test.addThen(['sprite_visible', sprite]);
+      run_phantom_js(test, next);
+    })
+    .then("sprite $sprite is hidden", function (sprite, next) {
+      test.addThen(['sprite_hidden', sprite]);
+      run_phantom_js(test, next);
+    })
     .then("costume $costume of sprite $sprite has size $size percent", function (costume, sprite, size, next) {
       test.addThen(['size_percentage', costume, sprite, parseInt(size)]);
       run_phantom_js(test, next);
