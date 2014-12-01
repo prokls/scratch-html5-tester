@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 if(process.argv.length < 3) {
   console.log("Usage:");
-  console.log("  ./fetchproject.js #project-id");
-  console.log("or");
-  console.log("  node fetchproject #project-id");
+  console.log("  ./fetchproject.js projectID");
+  console.log("  node fetchproject projectID");
   process.exit();
 }
 
