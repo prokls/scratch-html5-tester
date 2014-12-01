@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Documentation for test case authors</title>
+    <style type="text/css">
+      article { font-family: Georgia, sans-serif; }
+      footer { font-family: monospace; border-top: black solid 1px; }
+      table th, table td { vertical-align: top; }
+      table td { text-align: center; }
+      .path { font-family: monospace; }
+      .name { font-style: italic; }
+      .gherkin { font-variant: small-caps; }
+    </style>
+  </head>
+
+  <body>
+    <article>
+      <h1>Documentation</h1>
+      <h2>For test case authors</h2>
+      <p>
+        This project uses Gherkin files to specify test cases.
+        Test case authors are requested to specify which application state has to be reached after a certain set of events.
+      </p>
+
+      <h3 id="structure">Structure of Gherkin files</h3>
+      <ul>
+        <li>
+          A <span class="gherkin">Given</span> statement in Gherkin indicates the project to run.
+          It is the only valid <span class="gherkin">Given</span> statement.
+          <pre>Given loaded project #30552428</pre>
+          where 30552428 stands for an arbitrary project ID.
+        </li>
+        <li>
+          A <span class="gherkin">When</span> statement in Gherkin specifies the block <a href="#matching">expected to be executed</a>.
+          Consider, for example, a <a href="http://wiki.scratch.mit.edu/wiki/Go_to_X:_%28%29_Y:_%28%29_%28block%29">Go To XY</a> block.
+          This block is represented as <code>go to x:{} y:{}</code> in the Scratch Editor where the curly brackets stand for numeric values.
+          Equivalently to expect this block to be executed, you write a <span class="gherkin">When</span> statement with the same representation:
+          <pre>When go to x:100 y:150</pre>
+          There are also some <a href="#special_when">special <span class="gherkin">When</span> statement structures</a>.
+        </li>
+        <li>
+          <span class="gherkin">Then</span> statements are rather specific and do not conform to any consistent concept.
+          Valid <span class="gherkin">Then</span> statements are listed below in section <a href="then"><span class="gherkin">Then</span> statements</a>.
+        </li>
+        <li>
+          <span class="gherkin">When</span> and <span class="gherkin">Then</span> statements can be extended using the <span class="gherkin">And</span> keyword.
+          <pre>    When using Bat2
+     And when green flag clicked
+     And show
+    Then costume bat2-a of sprite Bat2 is visible</pre>
+        </li>
+        <li>
+          Example Gherkin files are provided in <span class="path">test/features</span>.
+        </li>
+      </ul>
+
+      <h3 id="matching">Fuzzy block matching</h3>
+      <p>
+        <span class="gherkin">When</span> statements (extended by <span class="gherkin">And</span> statements) provide an ordered list of blocks with its parameters to be executed.
+        Fuzzy block matching now uses this list and matches it with the blocks actually executed by some Scratch Player.
+        For example consider the sequence {A, B, C} (where A, B and C are placeholders for block names) to be executed by some Scratch Player.
+        A sequence {A, B, C} of block names specified in the Gherkin <span class="gherkin">When</span> statements matches this executed sequence.
+        Fuzzy refers to the property that matching also happens for omitted elements. Besides {A, B, C}, the following sequences also match:
+      </p>
+
+      <figure>
+        <table>
+          <thead>
+            <tr>
+              <th>Executed block sequence</th>
+              <th><span class="gherkin">When</span> statements block sequence</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td rowspan="5">{A, B, C}</td><td>{A, B, C, D}</td></tr>
+            <tr><td>{A, B, D, C}</td></tr>
+            <tr><td>{A, B, D, C}</td></tr>
+            <tr><td>{A, D, B, C}</td></tr>
+            <tr><td>{D, A, B, E, C}</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Fuzzy block matching examples</figcaption>
+      </figure>
+
+      <p>
+        Formally an executed block sequence <var>A</var> matches a <span class="gherkin">When</span> statement sequence <var>B</var> if and only if
+        all elements of <var>A</var> occur in <var>B</var> in the given order of <var>A</var>. It is also important to point out that the matching is satisfied
+        only all elements occured. The remaining elements in <var>B</var> do not have to be read.
+      </p>
+
+      <h3 id="special_when">Special <span class="gherkin">when</span> statement structures</h3>
+      <ul>
+        <li>
+          <code>using {Sprite}</code> where {Sprite} stands for any name of a sprite.
+          This statement builds Sprite context. All following blocks are referring to the given sprite (as in <code>when <em>this sprite</em> clicked</code>)
+          unless the context is rewritten with another <code>using</code> statement.
+        </li>
+      </ul>
+
+      <h3 id="then"><span class="gherkin">Then</span> statements</h3>
+      <!-- TODO -->
+    </article>
+
+    <footer>
+      <p>
+        <strong>Last update:</strong> 1st of Dec 2014 <br />
+        <strong>Authors:</strong> HTML5 team by TU Graz
+      </p>
+    </footer>
+  </body>
+</html>
