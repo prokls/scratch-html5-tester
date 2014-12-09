@@ -91,6 +91,12 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       console.log("console output: " + msg);
   };
 
+  page.onCallback = function (msg) {
+    //implementation will follow.
+    console.log("Received User input message");
+    console.log(msg);
+  };
+
   page.onInitialized = function () {
     page.evaluate(function(basepath){
       window.projectbasepath = basepath;
@@ -200,7 +206,7 @@ module.exports = (function() {
     //.when("block (\w+) is run", function (blockname, next) { test.addWhen(['blockRun', blockname]); next(); })
     //.when("$sprite is clicked", function (spr, next) { test.addWhen(['whenClicked', spr]); next(); }) // custom
     .when("when $key key pressed", function (key, next) { test.addWhen(['whenKeyPressed', key]); next(); })
-    .when("when this sprite is clicked", function (next) { test.addWhen(['whenClicked']); next(); })
+    .when("when this sprite clicked", function (next) { test.addWhen(['whenClicked']); next(); })
     .when("when backdrop switches to $backdrop", function (backdrop, next) { test.addWhen(['whenSceneStarts'], backdrop); next(); })
     .when("when $sensor > $numeric", function (sensor, numeric, next) { test.addWhen(['whenSensorGreaterThan', sensor, parseInt(numeric)]); next(); })
     .when('when I receive "$text"', function (text, next) { test.addWhen(['whenIReceive', text]); next(); })
@@ -306,6 +312,8 @@ module.exports = (function() {
     .when("show list $list", function (list, next) { test.addWhen(["showList:", list]); next(); })
     .when("hide list $list", function (list, next) { test.addWhen(["hideList:", list]); next(); })
     .when("using $sprite", function (sprite, next) { test.setCurrentSprite(sprite); next(); })
+    .when("user points to sprite $sprite", function (sprite, next) { test.addWhen(["userPointToSprite", sprite]); next(); })
+    .when("user clicks $key", function (key, next) { test.addWhen(["userClick", key]); next(); })
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);

@@ -1,4 +1,4 @@
-Feature: Testcase 1
+Feature: Clicking
 
 Scenario: show sprite (costume) when green flag clicked
 
@@ -6,4 +6,8 @@ Scenario: show sprite (costume) when green flag clicked
     When using Cat
      And when green flag clicked
      And switch costume to costume1
-    Then costume costume1 of sprite Cat is visible
+     And user points to sprite Cat
+     And user clicks left_mouse
+     And when this sprite clicked
+     And switch costume to costume2
+    Then costume costume2 of sprite Cat is visible
