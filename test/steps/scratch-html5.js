@@ -92,9 +92,18 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   };
 
   page.onCallback = function (msg) {
-    //implementation will follow.
-    console.log("Received User input message");
-    console.log(msg);
+    switch(msg[0]) {
+      case "pointTo":
+        page.sendEvent('mousemove', msg[1], msg[2]);
+        break;
+      case "keypress":
+        if(msg[1] === 'mousebutton') {
+          page.sendEvent('click');
+        }
+        break;
+      default:
+        console.log(msg[0] + " not implemented yet");
+    }
   };
 
   page.onInitialized = function () {
