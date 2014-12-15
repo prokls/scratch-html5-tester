@@ -92,17 +92,14 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   };
 
   page.onCallback = function (msg) {
-    switch(msg[0]) {
-      case "pointTo":
-        page.sendEvent('mousemove', msg[1], msg[2]);
-        break;
-      case "keypress":
-        if(msg[1] === 'mousebutton') {
-          page.sendEvent('click');
-        }
-        break;
-      default:
-        console.log(msg[0] + " not implemented yet");
+
+    var userInputEventKeys = ['mousemove', 'click', 'mousedown', 'keydown',
+      'mouseup', 'keyup', 'keypress']; 
+
+    if(userInputEventKeys.indexOf(msg[0]) >= 0) {
+      page.sendEvent.apply(this, msg);
+    } else {
+      console.log(msg[0] + " not implemented yet");
     }
   };
 
@@ -322,7 +319,7 @@ module.exports = (function() {
     .when("hide list $list", function (list, next) { test.addWhen(["hideList:", list]); next(); })
     .when("using $sprite", function (sprite, next) { test.setCurrentSprite(sprite); next(); })
     .when("user points to sprite $sprite", function (sprite, next) { test.addWhen(["userPointToSprite", sprite]); next(); })
-    .when("user clicks $key", function (key, next) { test.addWhen(["userClick", key]); next(); })
+    .when("user clicks", function (next) { test.addWhen(["userClick"]); next(); })
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
