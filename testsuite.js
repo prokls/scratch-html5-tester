@@ -31,6 +31,8 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
     var yadda = new Yadda.Yadda(library);
 
     scenarios(feature.scenarios, function(scenario) {
+      scenario.steps.push("then run phantomjs");
+
       steps(scenario.steps, function(step, done) {
         yadda.yadda(step, done);
       });

@@ -323,38 +323,41 @@ module.exports = (function() {
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("costume $costume of sprite $sprite is hidden", function (costume, sprite, next) {
       test.addThen(['hidden', costume, sprite]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("costume $costume of sprite $sprite is visible", function (costume, sprite, next) {
       test.addThen(['visible', costume, sprite]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("sprite $sprite is visible", function (sprite, next) {
       test.addThen(['sprite_visible', sprite]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("sprite $sprite is hidden", function (sprite, next) {
       test.addThen(['sprite_hidden', sprite]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("costume $costume of sprite $sprite has size $size percent", function (costume, sprite, size, next) {
       test.addThen(['size_percentage', costume, sprite, parseInt(size)]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("costume $costume of sprite $sprite has size width:$width height:$height", function (costume, sprite, width, height, next) {
       test.addThen(['size', costume, sprite, parseInt(width), parseInt(height)]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("costume $costume of sprite $sprite is rotated by $rot degrees", function (costume, sprite, rot, next) {
       test.addThen(['rotation', costume, sprite, parseInt(rot)]);
-      run_phantom_js(test, next);
+      next();
     })
     .then("variable $variable is $val", function (variable, val, next) {
       test.addThen(['variable', 'Stage', variable, val]);
-      run_phantom_js(test, next);
+      next();
     })
+    .then("run phantomjs", function (next) {
+      run_phantom_js(test, next);
+    });
 })();
