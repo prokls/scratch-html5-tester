@@ -53,28 +53,6 @@ var Testcase = function () {
 };
 
 function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
-  // based on https://github.com/ariya/phantomjs/blob/master/examples/waitfor.js
-  var waitFor = function (testFx, onReady, onTimeout, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000;
-    var start = new Date().getTime();
-    var condition = false;
-    var interval = setInterval(
-      function() {
-        if ((new Date().getTime() - start < maxtimeOutMillis) && !condition) {
-          condition = testFx();
-        } else {
-          if (!condition) {
-            onTimeout();
-            clearInterval(interval);
-          } else {
-            onReady();
-            clearInterval(interval);
-          }
-        }
-      }, 250
-    );
-  };
-
   var page = this;
 
   page.onError = function (msg, trace) {
@@ -95,9 +73,48 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
     var userInputEventKeys = ['mousemove', 'click', 'mousedown', 'keydown',
       'mouseup', 'keyup', 'keypress']; 
+    var testcaseRunner = ['testcasesFinished'];
 
     if(userInputEventKeys.indexOf(msg[0]) >= 0) {
       page.sendEvent.apply(this, msg);
+    } else if (testcaseRunner.indexOf(msg[0]) >= 0) {
+      if (msg[0] === 'testcasesFinished') {
+        var report = msg[1];
+        var number_of_tcs = "" + report['testcases_done'] + " / "
+                            + report['testcases_given'];
+        var errors = report.errors;
+
+        if (report.warnings) {
+          for (var i = 0; i < report.warnings; i++)
+            console.warn(report.warnings[i]);
+        }
+        if (report.errors) {
+          for (var i = 0; i < report.errors; i++) {
+            var errmsg = report.errors[i];
+            console.error(report.errors[i]);
+          }
+        }
+
+        if (report.ok) {
+          resolve("Testsuite terminated successfully: "
+            + number_of_tcs + " ok");
+        } else {
+          reject(new Error("Error occured. Last error message was: " + errmsg));
+        }
+
+
+        console.log("testsuite terminated");
+        var errmsg = page.evaluate(function () { return window.runner.lastErrorMessage(); });
+        if (success)
+          resolve("testsuite terminated successfully");
+        else
+          reject(new Error("Condition unsatisfied" + (errmsg ? ": " + errmsg : "")));
+      }
+//      return page.evaluate(function () { return window.runner.hasFinished(); });
+//    }, function () {
+//      console.log("testsuite did not finish");
+//      reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
+//    }, wait_timeout);
     } else {
       console.log(msg[0] + " not implemented yet");
     }
@@ -120,23 +137,6 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     page.evaluate(function (tc) {
       window.runner.receiveTestcaseSpec(tc);
     }, testcase);
-
-    var wait_timeout = 30000;
-
-    waitFor(function () {
-      return page.evaluate(function () { return window.runner.hasFinished(); });
-    }, function () {
-      console.log("testsuite terminated");
-      var success = page.evaluate(function () { return window.runner.hasSucceeded(); });
-      var errmsg = page.evaluate(function () { return window.runner.lastErrorMessage(); });
-      if (success)
-        resolve("testsuite terminated successfully");
-      else
-        reject(new Error("Condition unsatisfied" + (errmsg ? ": " + errmsg : "")));
-    }, function () {
-      console.log("testsuite did not finish");
-      reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
-    }, wait_timeout);
   });
 }
 
