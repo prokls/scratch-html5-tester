@@ -337,6 +337,10 @@ module.exports = (function() {
       test.addThen(['sprite_visible', sprite]);
       next();
     })
+    .then("backdrop $backdrop is visible", function (sprite, next) {
+      test.addThen(['sprite_visible', sprite]);
+      next();
+    })
     .then("sprite $sprite is hidden", function (sprite, next) {
       test.addThen(['sprite_hidden', sprite]);
       next();
