@@ -29,7 +29,8 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
     var library = require('./test/steps/scratch-html5');
     var yadda = new Yadda.Yadda(library);
 
-    before(function () { if (library.before) library.before() });
+    if (library.before)
+      before(library.before);
 
     scenarios(feature.scenarios, function(scenario) {
       steps(scenario.steps, function(step, done) {
@@ -37,7 +38,8 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
       });
     });
 
-    after(function () { if (library.after) library.after(); });
+    if (library.after)
+      after(library.after);
   });
 });
 

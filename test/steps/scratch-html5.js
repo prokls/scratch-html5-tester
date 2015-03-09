@@ -54,7 +54,6 @@ var Testcase = function () {
 
 function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   var page = this;
-  console.log("TC::: " + testcase);
 
   page.onError = function (msg, trace) {
     console.error(msg);
@@ -143,35 +142,30 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   });
 }
 
-function run_phantom_js(test_serialized) {
+function run_phantom_js(test_serialized, next) {
   var rootpath        = path.resolve(__dirname, '../../lib');
   var projectbasepath = path.resolve(__dirname + '/../projects') + '/';
   var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
 
-  var promises = [];
-
-  promises.push(
-    phridge
-      .spawn()
-      .then(function (phantom) { return phantom.createPage(); })
-  );
-
   if (!fs.existsSync(projectjsonfile)) {
     var projectfetcher = require('../../lib/projectfetcher.js');
     console.log("Project files missing... Start project fetcher");
-    promises.push(
-      projectfetcher.fetchProject(test_serialized.id, projectbasepath)
-    );
+    projectfetcher.fetchProject(test_serialized.id, projectbasepath)
   }
 
-  return require('q').all(promises)
-    .then(function(results) {
-        var page = results[0];
-        return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
+  phridge
+    .spawn()
+    .then(function (phantom) {
+      return phantom.createPage();
+    })
+    .then(function (page) {
+      return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
     })
     .finally(phridge.disposeAll)
-    .done(function () { },
-      function (err) { throw err; });
+    .done(
+      function () { next(); },
+      function (err) { throw err; }
+    );
 }
 
 
@@ -364,8 +358,8 @@ module.exports = (function() {
       next();
     });
 
-  lib.after = function () {
-    run_phantom_js(test.serialize());
+  lib.after = function (next) {
+    run_phantom_js(test.serialize(), next);
   };
 
   return lib;
