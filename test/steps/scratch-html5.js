@@ -54,6 +54,7 @@ var Testcase = function () {
 
 function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   var page = this;
+  console.log("TC::: " + testcase);
 
   page.onError = function (msg, trace) {
     console.error(msg);
@@ -205,7 +206,6 @@ module.exports = (function() {
   var test;// = new Testcase();
   var lib = English.library(dict)
     .given("loaded project #$NUM", function(num, next) {
-      console.log("Start scenario!");
       test = new Testcase();
       test.addProjectId(num);
       next();
@@ -364,8 +364,7 @@ module.exports = (function() {
       next();
     });
 
-  lib.teardown = function (next) {
-    console.log("Teardown invoked!");
+  lib.after = function () {
     run_phantom_js(test.serialize());
   };
 
