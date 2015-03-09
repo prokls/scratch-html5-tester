@@ -95,6 +95,8 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
           }
         }
 
+        console.log(report);
+        for (var k in report) console.log(k, report[k]);
         if (report.ok) {
           resolve("Testsuite terminated successfully: "
             + number_of_tcs + " ok");
@@ -140,8 +142,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   });
 }
 
-function run_phantom_js(test, next) {
-  var test_serialized = test.serialize();
+function run_phantom_js(test_serialized) {
   var rootpath        = path.resolve(__dirname, '../../lib');
   var projectbasepath = path.resolve(__dirname + '/../projects') + '/';
   var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
@@ -168,7 +169,7 @@ function run_phantom_js(test, next) {
         return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
     })
     .finally(phridge.disposeAll)
-    .done(function () { next(); },
+    .done(function () { },
       function (err) { throw err; });
 }
 
@@ -202,10 +203,11 @@ var dict = new Yadda.Dictionary()
 module.exports = (function() {
   
   var test;// = new Testcase();
-  return English.library(dict)
+  var lib = English.library(dict)
     .given("loaded project #$NUM", function(num, next) {
-    test = new Testcase();
-    test.addProjectId(num);
+      console.log("Start scenario!");
+      test = new Testcase();
+      test.addProjectId(num);
       next();
     })
     .when("when green flag clicked", function (next) { test.addWhen(['whenGreenFlag']); next(); })
@@ -360,8 +362,12 @@ module.exports = (function() {
     .then("variable $variable is $val", function (variable, val, next) {
       test.addThen(['variable', 'Stage', variable, val]);
       next();
-    })
-    .then("run phantomjs", function (next) {
-      run_phantom_js(test, next);
     });
+
+  lib.teardown = function (next) {
+    console.log("Teardown invoked!");
+    run_phantom_js(test.serialize());
+  };
+
+  return lib;
 })();
