@@ -95,22 +95,12 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
           }
         }
 
-        console.log(report);
-        for (var k in report) console.log(k, report[k]);
         if (report.ok) {
           resolve("Testsuite terminated successfully: "
             + number_of_tcs + " ok");
         } else {
           reject(new Error("Error occured. Last error message was: " + errmsg));
         }
-
-
-        console.log("testsuite terminated");
-        var errmsg = page.evaluate(function () { return window.runner.lastErrorMessage(); });
-        if (success)
-          resolve("testsuite terminated successfully");
-        else
-          reject(new Error("Condition unsatisfied" + (errmsg ? ": " + errmsg : "")));
       }
 //      return page.evaluate(function () { return window.runner.hasFinished(); });
 //    }, function () {
