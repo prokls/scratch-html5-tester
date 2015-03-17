@@ -9,7 +9,7 @@ var utils = require('./lib/utils.js');
 
 var l = utils.Logger('testsuite');
 
-Yadda.plugins.mocha.AsyncStepLevelPlugin.init();
+Yadda.plugins.mocha.StepLevelPlugin.init();
 
 
 /**
