@@ -127,7 +127,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       window.projectbasepath = basepath;
     }, projectbasepath);
     page.injectJs(rootpath + '/audiomock.js');
-    page.injectJs(rootpath + '/testframework.js');
+    page.injectJs(rootpath + '/inbrowser.js');
   };
 
   page.open("lib/scratch-html5/index.html#" + testcase['id'], function (status) {
