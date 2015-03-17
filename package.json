@@ -13,9 +13,9 @@
     "name": "Lukas Prokop, Andreas Schulhofer, Richard Schumi",
     "email": "lukas.prokop@student.tugraz.at"
   },
-  "main": "testsuite.js",
+  "main": "main.js",
   "scripts": {
-    "test": "mocha --reporter spec --timeout 200000 testsuite.js"
+    "test": "mocha --reporter spec --timeout 200000 main.js"
   },
   "dependencies": {
     "assert": "1.1.2",

@@ -30,6 +30,6 @@ Install
 
 4. Run tests using::
 
-    mocha --reporter spec --timeout 20000 testsuite.js
+    mocha --reporter spec --timeout 20000 main.js
 
 Cheers!

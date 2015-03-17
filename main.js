@@ -1,5 +1,5 @@
 /*
- * testsuite.js
+ * main.js
  *
  * This file invokes Yadda for every feature file.
  */
