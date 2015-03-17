@@ -1,7 +1,13 @@
-/*
+/**
  * main.js
  *
- * This file invokes Yadda for every feature file.
+ * This file shall be invoked with something like
+ *   mocha --reporter spec --file position.feature main.js
+ *
+ * This invokes mocha as test runner to run only one feature
+ * file called position.feature. Yadda will read this feature
+ * file and this implementation will build the test and execute
+ * it in the phantomjs browser.
  */
 var Yadda = require('yadda');
 var path = require('path');
@@ -31,6 +37,7 @@ function filtered(current) {
 }
 
 
+/** Invokes Yadda for every feature file */
 new Yadda.FeatureFileSearch('./test/features').each(function(file) {
   if (!filtered(file))
     return;
