@@ -1,32 +1,43 @@
 {
   "name": "scratch-html5-tester",
-  "version": "0.0.1",
-  "keywords": ["Scratch", "html5", "javascript testing", "bdd", "yadda"],
-  "description": "Testing framework for HTML5 Scratch Player",
-  "repository": { "type": "git", "url": "git://github.com/prokls/scratch-html5-tester" },
-  "licenses": [
-    {
-      "type": "Public Domain"
-    }
-  ],
+  "version": "0.0.2",
+
   "author": {
-    "name": "Lukas Prokop, Andreas Schulhofer, Richard Schumi",
-    "email": "lukas.prokop@student.tugraz.at"
+    "name": "Scratch MIT HTML5 subteam",
+    "email": "contact@catrobat.org",
+    "url": "http://catrobat.org/"
   },
-  "main": "main.js",
-  "scripts": {
-    "test": "mocha --reporter spec --timeout 200000 main.js"
-  },
+  "bin": {"scratch-html5-tester-fetch": "fetchproject.js", "scratch-html5-tester": "main.js"},
+  "bugs": { "url": "https://github.com/prokls/scratch-html5-tester/issues" },
+  "contributors": [
+    {
+      "name": "Lukas Prokop",
+      "email": "lukas.prokop@student.tugraz.at"
+    },
+    { "name": "Marc Schober" },
+    { "name": "Andreas Schulhofer" },
+    { "name": "Richard Schumi" },
+    { "name": "Christof Rabensteiner" }
+  ],
   "dependencies": {
-    "assert": "1.1.2",
-    "mocha": "1.21.4",
+    "assert": "1.3.0",
+    "mocha": "2.2.1",
     "phridge": "1.0.7",
     "promisepipe": "1.0.1",
-    "q": "1.1.1",
-    "request": "2.44.0",
-    "yadda": "0.11.2"
+    "q": "1.2.0",
+    "request": "2.53.0",
+    "yadda": "0.11.5"
   },
-  "bugs": {
-    "url": "https://github.com/prokls/scratch-html5-tester/issues"
-  }
+  "description": "Testing framework for the HTML5 Scratch Player",
+  "devDependencies": {
+	"jsdoc": "<=3.3.0",
+	"grunt": "0.4.5",
+	"grunt-contrib-jshint": "~0.10.0"
+  },
+  "files": ["docs", "lib", "test", "fetchproject.js", "main.js", "package.json", "README.rst"],
+  "keywords": ["Scratch", "html5", "javascript testing", "bdd", "yadda"],
+  "license": "Public Domain",
+  "main": "main.js",
+  "repository": { "type": "git", "url": "git://github.com/prokls/scratch-html5-tester" },
+  "scripts": { "test": "mocha --reporter spec --timeout 200000 main.js" }
 }
