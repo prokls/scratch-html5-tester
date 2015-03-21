@@ -39,5 +39,8 @@
   "license": "Public Domain",
   "main": "main.js",
   "repository": { "type": "git", "url": "git://github.com/prokls/scratch-html5-tester" },
-  "scripts": { "test": "mocha --reporter spec --timeout 200000 main.js" }
+  "scripts": {
+    "test": "mocha --reporter spec --timeout 200000 main.js",
+    "prepublish" : "jsdoc.js fetchproject.js lib/audiomock.js lib/inbrowser.js lib/projectfetcher.js lib/utils.js main.js test/steps/scratch-html5.js"
+  }
 }
