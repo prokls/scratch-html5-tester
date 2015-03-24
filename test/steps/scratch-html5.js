@@ -149,6 +149,7 @@ function run_phantom_js(test_serialized, next) {
       return phantom.createPage();
     })
     .then(function (page) {
+      console.log("Opening file://" + projectbasepath + '/');
       return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
     })
     .finally(phridge.disposeAll)

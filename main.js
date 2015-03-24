@@ -60,3 +60,5 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
   });
 });
 
+/** The export object is empty, because this is an application, not a library */
+module.exports = {};
