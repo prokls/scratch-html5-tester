@@ -144,7 +144,7 @@ function run_phantom_js(test_serialized, next) {
     var projectfetcher = require('../../lib/projectfetcher.js');
     log.info("Resources for project #" + test_serialized.id + " not available.");
     log.info("Start project fetcher to retrieve data of project #" + test_serialized.id);
-    projectfetcher.fetchProject(test_serialized.id, projectbasepath)
+    projectfetcher.fetchProject(test_serialized.id, projectbasepath);
   }
 
   phridge

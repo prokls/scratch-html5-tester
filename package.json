@@ -23,6 +23,7 @@
     "assert": "1.3.0",
     "http-status-codes": "1.0.x",
     "mocha": "2.2.1",
+    "path": "0.11.x",
     "phridge": "1.0.7",
     "promisepipe": "1.0.1",
     "q": "1.2.0",
