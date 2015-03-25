@@ -26,7 +26,7 @@ Install
 
 3. Install dependencies::
 
-    cd scratch-html5-tester.git && sudo apt-get install nodejs-legacy && npm install
+    cd scratch-html5-tester && sudo apt-get install nodejs-legacy && npm install
 
 4. Run tests using::
 
