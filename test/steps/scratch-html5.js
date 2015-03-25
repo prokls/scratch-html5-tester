@@ -63,6 +63,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     trace.forEach(function (item) {
       console.error("  ", item.file, ": line", item.line);
     });
+    reject("JavaScript execution error");
   };
 
   page.onConsoleMessage = function (msg, lineno, sourceid) {
@@ -129,10 +130,9 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     if (status !== 'success')
       return reject(new Error("Failed to load page " + this.url));
 
-    // Call page.evaluate every 250 milliseconds and ask whether
-    // runner.hasFinished is true.
     page.evaluate(function (tc) {
-      window.runner.receiveTestcaseSpec(tc);
+      window.runner.setTestcaseSpec(tc);
+      window.runner.start();
     }, testcase);
   });
 }
