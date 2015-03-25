@@ -59,18 +59,18 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   var page = this;
 
   page.onError = function (msg, trace) {
-    log.error(msg);
+    console.error(msg);
     trace.forEach(function (item) {
-      log.error("  ", item.file, ": line", item.line);
+      console.error("  ", item.file, ": line", item.line);
     });
   };
 
   page.onConsoleMessage = function (msg, lineno, sourceid) {
     // browser context, hence `console` instead of `log`
     if (lineno !== undefined && sourceid !== undefined)
-      log.error("console output: " + msg + " (line " + lineno + ") in " + sourceid);
+      console.error("console output: " + msg + " (line " + lineno + ") in " + sourceid);
     else
-      log.info("console output: " + msg);
+      console.info("console output: " + msg);
   };
 
   page.onCallback = function (msg) {
