@@ -63,7 +63,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     trace.forEach(function (item) {
       console.error("  ", item.file, ": line", item.line);
     });
-    reject("JavaScript execution error");
+    reject(new Error("JavaScript execution error"));
   };
 
   page.onConsoleMessage = function (msg, lineno, sourceid) {
@@ -76,44 +76,41 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
   page.onCallback = function (msg) {
 
+    if (typeof msg['type'] === 'undefined') {
+      var err = 'Invalid message received: ' + JSON.stringify(msg);
+      throw new Error(err);
+    }
+
+    var msgtype = msg['type'];
     var userInputEventKeys = ['mousemove', 'click', 'mousedown', 'keydown',
       'mouseup', 'keyup', 'keypress']; 
-    var testcaseRunner = ['testcasesFinished'];
 
-    if(userInputEventKeys.indexOf(msg[0]) >= 0) {
-      page.sendEvent.apply(this, msg);
-    } else if (testcaseRunner.indexOf(msg[0]) >= 0) {
-      if (msg[0] === 'testcasesFinished') {
-        var report = msg[1];
-        var number_of_tcs = "" + report['testcases_done'] + " / "
-                            + report['testcases_given'];
-        var errors = report.errors;
+    switch (msgtype) {
+      case 'action':
+        if (userInputEventKeys.indexOf(msg['action'][0]) >= 0)
+          page.sendEvent.apply(this, msg);
+        break;
+      case 'test':
+        var l = undefined;
+        if (msg['test']['ok'])
+          l = console.info;
+        else
+          l = console.warn;
 
-        if (report.warnings) {
-          for (var i = 0; i < report.warnings; i++)
-            log.warn(report.warnings[i]);
-        }
-        if (report.errors) {
-          for (var i = 0; i < report.errors; i++) {
-            var errmsg = report.errors[i];
-            log.error(report.errors[i]);
-          }
-        }
+        l("I expected that '" + msg['test']['what'] + "' '" + msg['test']['expected']
+          + '" and this was ' + (msg['test']['ok'] ? 'fine' : "'" + msg['test']['actual'] + "'"));
+        break;
+      case 'report':
+        console.info("I received some report:");
+        console.info(JSON.stringify(msg['report']));
 
-        if (report.ok) {
-          resolve("Testsuite terminated successfully: "
-            + number_of_tcs + " ok");
-        } else {
-          reject(new Error("Error occured. Last error message was: " + errmsg));
-        }
-      }
-//      return page.evaluate(function () { return window.runner.hasFinished(); });
-//    }, function () {
-//      log.error("testsuite did not finish");
-//      reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
-//    }, wait_timeout);
-    } else {
-      log.info(msg[0] + " not implemented yet");
+        if (msg['report']['ok'])
+          resolve("Testsuite terminated successfully");
+        else
+          reject(new Error("Testsuite failed"));
+        break;
+      default:
+        throw new Error("Unknown message type received: " + msg['type']);
     }
   };
 
@@ -122,6 +119,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       window.projectbasepath = basepath;
     }, projectbasepath);
     page.injectJs(rootpath + '/utils.js');
+    page.injectJs(rootpath + '/message_bus.js');
     page.injectJs(rootpath + '/audiomock.js');
     page.injectJs(rootpath + '/inbrowser.js');
   };
