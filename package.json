@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "assert": "1.3.0",
+    "http-status-codes": "1.0.x",
     "mocha": "2.2.1",
     "phridge": "1.0.7",
     "promisepipe": "1.0.1",
@@ -30,9 +31,9 @@
   },
   "description": "Testing framework for the HTML5 Scratch Player",
   "devDependencies": {
-	"jsdoc": "<=3.3.0",
-	"grunt": "0.4.5",
-	"grunt-contrib-jshint": "~0.10.0"
+    "jsdoc": "<=3.3.0",
+    "grunt": "0.4.5",
+    "grunt-contrib-jshint": "~0.10.0"
   },
   "files": ["docs", "lib", "test", "fetchproject.js", "main.js", "package.json", "README.rst"],
   "keywords": ["Scratch", "html5", "javascript testing", "bdd", "yadda"],
@@ -40,7 +41,6 @@
   "main": "main.js",
   "repository": { "type": "git", "url": "git://github.com/prokls/scratch-html5-tester" },
   "scripts": {
-    "test": "mocha --reporter spec --timeout 200000 main.js",
-    "postinstall" : "jsdoc.js fetchproject.js lib/audiomock.js lib/inbrowser.js lib/projectfetcher.js lib/utils.js main.js test/steps/scratch-html5.js"
+    "test": "mocha --reporter spec --timeout 200000 main.js"
   }
 }
