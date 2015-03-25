@@ -11,6 +11,9 @@ var phridge = require('phridge');
 var English = Yadda.localisation.English;
 var path = require('path');
 var fs = require('fs');
+var utils = require('../../lib/utils.js');
+
+var log = utils.Logger('scratch-html5');
 
 // Testcase object to collect testcase data
 
@@ -56,17 +59,17 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   var page = this;
 
   page.onError = function (msg, trace) {
-    console.error(msg);
+    log.error(msg);
     trace.forEach(function (item) {
-      console.log("  ", item.file, ": line", item.line);
+      log.error("  ", item.file, ": line", item.line);
     });
   };
 
   page.onConsoleMessage = function (msg, lineno, sourceid) {
     if (lineno !== undefined && sourceid !== undefined)
-      console.log("console output: " + msg + " (line " + lineno + ") in " + sourceid);
+      log.error("console output: " + msg + " (line " + lineno + ") in " + sourceid);
     else
-      console.log("console output: " + msg);
+      log.info("console output: " + msg);
   };
 
   page.onCallback = function (msg) {
@@ -86,12 +89,12 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
         if (report.warnings) {
           for (var i = 0; i < report.warnings; i++)
-            console.warn(report.warnings[i]);
+            log.warn(report.warnings[i]);
         }
         if (report.errors) {
           for (var i = 0; i < report.errors; i++) {
             var errmsg = report.errors[i];
-            console.error(report.errors[i]);
+            log.error(report.errors[i]);
           }
         }
 
@@ -104,11 +107,11 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       }
 //      return page.evaluate(function () { return window.runner.hasFinished(); });
 //    }, function () {
-//      console.log("testsuite did not finish");
+//      log.error("testsuite did not finish");
 //      reject(new Error("testsuite did not finish within " + (wait_timeout / 1000) + " seconds"));
 //    }, wait_timeout);
     } else {
-      console.log(msg[0] + " not implemented yet");
+      log.info(msg[0] + " not implemented yet");
     }
   };
 
@@ -134,12 +137,13 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
 function run_phantom_js(test_serialized, next) {
   var rootpath        = path.resolve(__dirname, '../../lib');
-  var projectbasepath = path.resolve(__dirname + '/../projects') + '/';
+  var projectbasepath = path.resolve(__dirname + '/../projects');
   var projectjsonfile = projectbasepath + '/' + test_serialized.id + ".json";
 
   if (!fs.existsSync(projectjsonfile)) {
     var projectfetcher = require('../../lib/projectfetcher.js');
-    console.log("Project files missing... Start project fetcher");
+    log.info("Resources for project #" + test_serialized.id + " not available.");
+    log.info("Start project fetcher to retrieve data of project #" + test_serialized.id);
     projectfetcher.fetchProject(test_serialized.id, projectbasepath)
   }
 
@@ -149,7 +153,6 @@ function run_phantom_js(test_serialized, next) {
       return phantom.createPage();
     })
     .then(function (page) {
-      console.log("Opening file://" + projectbasepath + '/');
       return page.run(rootpath, 'file://' + projectbasepath + '/', test_serialized, run_phridge);
     })
     .finally(phridge.disposeAll)

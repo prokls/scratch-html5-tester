@@ -13,7 +13,7 @@ var Yadda = require('yadda');
 var path = require('path');
 var utils = require('./lib/utils.js');
 
-var l = utils.Logger('testsuite');
+var log = utils.Logger('testsuite');
 
 Yadda.plugins.mocha.StepLevelPlugin.init();
 

@@ -17,10 +17,10 @@ projectFetcher
     console.log(res.length + " file(s) updated." );
   },
   function rejected(error) {
-    console.log("Something went wrong:");
-    console.log(error);
+    console.error("Something went wrong:");
+    console.error(error);
     if(error.code == 'ENOENT') {
-      console.log('Hint: Make sure that ' + projectsDirectory + ' exists and is writeable.');
+      console.error('Hint: Make sure that ' + projectsDirectory + ' exists and is writeable.');
     }
   }
   );
