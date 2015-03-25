@@ -66,10 +66,11 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   };
 
   page.onConsoleMessage = function (msg, lineno, sourceid) {
+    // browser context, hence `console` instead of `log`
     if (lineno !== undefined && sourceid !== undefined)
-      log.error("console output: " + msg + " (line " + lineno + ") in " + sourceid);
+      console.error("console output: " + msg + " (line " + lineno + ") in " + sourceid);
     else
-      log.info("console output: " + msg);
+      console.info("console output: " + msg);
   };
 
   page.onCallback = function (msg) {
