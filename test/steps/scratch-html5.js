@@ -59,7 +59,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
   var page = this;
 
   page.onError = function (msg, trace) {
-    console.error(msg);
+    console.error("An error occured in phantomjs: " + msg);
     trace.forEach(function (item) {
       console.error("  ", item.file, ": line", item.line);
     });
