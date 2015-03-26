@@ -87,7 +87,12 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
     switch (msgtype) {
       case 'action':
-        if (userInputEventKeys.indexOf(msg['action'][0]) >= 0)
+        if (msg['action'][0] === 'screenshot') {
+          var suffix = (msg['action'].length > 1)
+                          ? ("" + msg['action'][1])
+                          : ("" + Date.now());
+          page.render('screenshot-' + suffix + '.png');
+        } else if (userInputEventKeys.indexOf(msg['action'][0]) >= 0)
           page.sendEvent.apply(this, msg);
         break;
       case 'test':
