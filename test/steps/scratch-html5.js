@@ -130,7 +130,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
     page.evaluate(function (tc) {
       window.runner.setTestcaseSpec(tc);
-      window.runner.start();
+      window.runner.wait_for_start();
     }, testcase);
   });
 }
