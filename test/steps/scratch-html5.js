@@ -129,6 +129,12 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     page.injectJs(rootpath + '/inbrowser.js');
   };
 
+  var fullpath = 'file://' + rootpath + '/scratch-html5/index.html#' + testcase['id'];
+  console.info("Opening URL in phantomjs: " + fullpath);
+
+  // Required. Otherwise loading local resources won't be allowed (Cross-Origin policy)
+  page.settings.webSecurityEnabled = false;
+
   page.open("lib/scratch-html5/index.html#" + testcase['id'], function (status) {
     if (status !== 'success')
       return reject(new Error("Failed to load page " + this.url));
