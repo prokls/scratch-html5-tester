@@ -364,7 +364,7 @@ module.exports = (function() {
       next();
     });
 
-  lib.after = function (next) {
+  lib.afterScenario = function (next) {
     run_phantom_js(test.serialize(), next);
   };
 
