@@ -1,4 +1,4 @@
-Feature: Testcase 1
+Feature: Project loaded in order to test them
 
 Scenario: show sprite (costume) when green flag clicked
 
