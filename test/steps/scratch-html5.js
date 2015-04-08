@@ -96,14 +96,14 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
           page.sendEvent.apply(this, msg);
         break;
       case 'test':
-        var l = undefined;
-        if (msg['test']['ok'])
-          l = console.info;
-        else
-          l = console.warn;
+        var m = "I expected that '" + msg['test']['what'] + "' '"
+              + msg['test']['expected'] + '" and this was '
+              + (msg['test']['ok'] ? 'fine' : "'" + msg['test']['actual'] + "'");
 
-        l("I expected that '" + msg['test']['what'] + "' '" + msg['test']['expected']
-          + '" and this was ' + (msg['test']['ok'] ? 'fine' : "'" + msg['test']['actual'] + "'"));
+        if (msg['test']['ok'])
+          console.info(m);
+        else
+          console.warn(m);
         break;
       case 'report':
         console.info("I received some report:");
