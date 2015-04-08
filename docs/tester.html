@@ -28,6 +28,9 @@
         <li>
           A <span class="gherkin">Given</span> statement in Gherkin indicates the project to run.
           It is the only valid <span class="gherkin">Given</span> statement.
+          This also implies that <span class="gherkin">Background</span> statements are unsupported,
+          because they use two <span class="gherkin">Given</span> statements (one in <span class="gherkin">Background</span>,
+          one in the <span class="gherkin">Scenario</span>).
           <pre>Given loaded project #30552428</pre>
           where 30552428 stands for an arbitrary project ID.
         </li>
