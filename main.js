@@ -38,9 +38,11 @@ function filtered(current) {
 
 
 /** Invokes Yadda for every feature file */
+var count_features = 0;
 new Yadda.FeatureFileSearch('./test/features').each(function(file) {
   if (!filtered(file))
     return;
+  count_features += 1;
 
   featureFile(file, function(feature) {
     var library = require('./test/steps/scratch-html5');
@@ -63,6 +65,9 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
       after(library.after);
   });
 });
+
+if (count_features === 0)
+  console.warn("No feature was executed");
 
 /** The export object is empty, because this is an application, not a library */
 module.exports = {};
