@@ -126,7 +126,8 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     page.injectJs(rootpath + '/utils.js');
     page.injectJs(rootpath + '/message_bus.js');
     page.injectJs(rootpath + '/audiomock.js');
-    page.injectJs(rootpath + '/inbrowser.js');
+    page.injectJs(rootpath + '/browser.test.js');
+    page.injectJs(rootpath + '/browser.load.js');
   };
 
   var fullpath = 'file://' + rootpath + '/scratch-html5/index.html#' + testcase['id'];
