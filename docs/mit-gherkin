@@ -1,0 +1,290 @@
+Gherkin Syntax
+==============
+
+    Feature
+      In order to {my personal goal}
+      As a {role}
+      I want to {method}
+    Scenario
+      Given {initial context}
+       And+
+      When {event occurs}
+       And+
+      Then {ensure outcome}
+       And+
+
+"Given" defines which project gets loaded.
+"When" specifies which block just finished its execution
+(finished unless sound is played or loop is running).
+"Then" allows to check the state after execution.
+
+Static whitelists for block names, keyboard keys, notes (sounds)
+Dynamic whitelist for Sprite names, costumes, backdrop, sounds
+
+Testcase activities
+-------------------
+
+Statements in When always specify finished events
+(even though they partially have text in present tense)
+
+
+Given loaded project #\d+
+
+When green flag clicked
+
+TODO(prokls, 29.09): Seems to be redundant to me now. Is the same like matching a block
+@custom
+@param name like in JSON, e.g. "gotoX:y:"
+When block (\w+) is run
+
+@custom
+@param Sprite name, objName in JSON
+When (\w+) is clicked
+
+@param keyboard key
+When (\w+) key pressed
+
+@desc either selected sprite or any sprite
+When this sprite is clicked
+
+@param backdrop (registered in stage)
+When backdrop switches to (\w+)
+
+@param threshold value
+When (loudness|timer|video motion) > (\f)
+
+@param text
+When I receive "(\w+)"
+
+@param text
+When broadcast "(\w+)" (and wait)?
+
+@desc I == current sprite, any sprite
+When I start as a clone
+
+@desc if statement matching then/else
+When if (.*) then
+
+@param number of iterations
+@param condition
+When (repeat (\d+)|forever|repeat until (.*))
+
+@param how many seconds?
+When wait (\f) secs
+
+@param condition
+When wait until (.*)
+
+@param Sprite
+When create clone of (\w+)
+
+When stop (all|this script|other scripts in sprite)
+When delete this clone
+When move (\d+) steps
+When turn (left|right) (\f) degrees
+When point in direction (0|90|-90|180)
+
+@param sprite
+When point towards (mouse pointer|{some sprite})
+When go to x:(\f) y:(\f)
+When go to (mouse pointer|{some sprite})
+When glide (\f) secs to x:(\d+) y:(\d+)
+When change x by (\f)
+When change y by (\f)
+When set x to (\f)
+When set y to (\f)
+When if on edge, bounce
+When set rotation style (all around|left-right|don't rotate)
+When turn motor on for (\f) secs
+When turn motor on
+When turn motor off
+When set motor power (\d+)
+When set motor direction (this way|that way|reverse)
+
+@param costume
+When switch costume to (\w+)
+
+@param backdrop
+When switch backdrop to (\w+)
+
+@param backdrop
+When switch backdrop to (\w+) and wait
+
+When next costume
+When next backdrop
+
+@param any text
+@param how long?
+When say "(.*)" for (\f) seconds
+
+@param any text
+When say "(.*)"
+
+@param any text
+When think "(.*)" for (\d+) secs
+
+@param any text
+When think "(.*)"
+
+When change (color|fisheye|whirl|pixelate|mosaic|brightness|ghost)
+effect by (\d+)
+When set (color|fisheye|whirl|pixelate|mosaic|brightness|ghost) effect
+to (\d+)
+When clear graphic effects
+When change size by (\f)
+When set size to (\f)
+When show
+When hide
+When go to front
+When go back (\d+) layers
+
+@param sound
+When play sound (\w+)
+
+@param sound
+When play sound (\w+) until done
+
+When stop all sounds
+
+@param drum selection (1-18)
+When play drum (\d+) for (\f) beats
+
+When rest for (\f) beats
+
+@param some predefined possible notes
+When play note (\d+) for (\f) beats
+
+When set instrument to (\d+)
+When change volume by (\d+)
+When set volume to (\d+)
+When change tempo by (\d+)
+When set tempo to (\d+) bpm
+
+When set video transparency to (\d+)
+When ask "(.*)" and wait
+When reset timer
+When turn video (on|off|on-flipped)
+
+When clear
+When pen down
+When pen up
+When stamp
+
+@param color
+@desc  UNSUPPORTED!
+When set pen color to (\w+)
+When change pen color by (\d+)
+When set pen color to (\d+)
+When change pen shade by (\d+)
+When set pen shade to (\d+)
+When change pen size by (\d+)
+When set pen size to (\d+)
+
+When change {variable} by (\d+)
+When set {variable} to (\d+)
+When hide variable {variable}
+When show variable {variable}
+
+@param any text
+When add "(.*)" to list {list}
+When delete (1|last|all) of {list}
+When insert "(.*)" at (1|last|random) of {list}
+When replace item (1|last|random) of {list} with "(.*)"
+When show list {list}
+When hide list {list}
+
+Custom blocks only supported via "When block (\w+) is run"
+
+Testcase fuzzy activity matching
+--------------------------------
+
+The testcase activities are a sequence of blocks.
+During the execution of a script, this order of blocks
+MUST occur consecutively. However one block must not
+exactly follow one another in this sequence. Consider a
+execution trace ABCD (4 different blocks) and testcases
+ABC, ACD, ADEC and DA. After execution of C, the first
+testcase matches and its condition (Then block) is checked.
+After execution of D, the second testcase matches.
+The third and fourth testcases are never met, because the
+third testcase contains an unmet state E and the fourth
+testcase specifies a wrong order.
+
+You can however enforce consecutive execution meaning that
+one block must directly follow another by specifying the
+"followingly" keyword:
+
+    When {some event}
+     And followingly {some event}
+
+Several bricks are relating to a "current brick". You can
+specify the current brick using the special structure
+
+    When in Sprite {Sprite name}
+     And this sprite is clicked
+
+and you can apply the match to any sprite by skipping this
+definition. If you have applied this statement and want to
+lose the current sprite, you can use the "in any Sprite"
+structure:
+
+    When in Sprite Sprite1
+     And {A}
+     And in Sprite Sprite2
+     And {B}
+     And in any Sprite
+     And {C}
+
+Testcase state checks
+---------------------
+
+Used inside "Then" statements.
+Are user/output-oriented (check *what* the *user* sees/hears/feels/etc)
+
+In general:
+
+- DOM manipulation and checks (visibility, position, existence, etc)
+- music was played
+- image processing at canvas
+
+Remarks for the implementation:
+
+- Reporters, ask bubbles, customes and backdrops are DOM elements
+- Only pen operations operate on the canvas
+- Check whether a line exists between x:X and y:Y by computing
+  the midpoint of the line and test color of 4- or 5-neighborhood
+  of this midpoint
+
+A DOM element is visible if and only if
+
+* the DOM element exists in the current window
+* the computed x and y coordinates are within the canvas boundaries
+* the object is not covered by any other object
+* CSS attribute display is not set to none
+* CSS attribute visibility is not set to hidden
+
+Then statements:
+
+* Costume (\w+) of sprite (\w+) is( not)? visible
+* Costume (\w+) of sprite (\w+) is at x:(\d+) y:(\d+)
+* Costume (\w+) of sprite (\w+) has size width:(\d+) height:(\d+)
+* Costume (\w+) of sprite (\w+) is layer #(\d+)
+* Costume (\w+) of sprite (\w+) is rotated by (\f) degrees
+* {All these operations also for "Backdrop (\w+) is ..."}
+* List (\w+) shows (\d+) elements
+* List (\w+) shows elements (.*)
+* Variable (\w+) shows (.*)
+* There are( at least| at most)? (\d+) lines between x:(\d+) y:(\d+) and
+x:(\d+) y:(\d+)
+* A line is visible between x:(\d+) and y:(\d+)
+* Music (\w+) is playing
+
+Open issues
+-----------
+
+* Support for parameterized action sequences?
+  (next action depends on text given in text box of last action)
+  Remark: Rather not. We are working with predefined action sequences.
+* Testcase state checks for the past? Like "music XY has been played"?
+* "Change pen color to" is missing in list of Scratch Wiki (Pen)
+
