@@ -74,12 +74,21 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       console.info("console output: " + msg);
   };
 
+  var logged_messages = { 'failure' : {}, 'ok' : {}, 'warn' : {} };
+
   page.onCallback = function (msg) {
 
     if (typeof msg['type'] === 'undefined') {
       var err = 'Invalid message received: ' + JSON.stringify(msg);
       throw new Error(err);
     }
+
+    var countObjectAttributes = function (obj) {
+      var counter = 0;
+      for (var _ in obj)
+        counter++;
+      return counter;
+    };
 
     var msgtype = msg['type'];
     var userInputEventKeys = ['mousemove', 'click', 'mousedown', 'keydown',
@@ -95,19 +104,64 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
         } else if (userInputEventKeys.indexOf(msg['action'][0]) >= 0)
           page.sendEvent.apply(this, msg);
         break;
-      case 'test':
-        var m = "I expected that '" + msg['test']['what'] + "' '"
-              + msg['test']['expected'] + '" and this was '
-              + (msg['test']['ok'] ? 'fine' : "'" + msg['test']['actual'] + "'");
 
-        if (msg['test']['ok'])
+      case 'test':
+        var path = 'feature? scenario? check?';  // TODO
+        var m = path + ": I expected that '" + msg.test.what + "' '"
+              + msg.test.expected + '" and this '
+              + (msg.test.ok ? 'fine' : "'" + msg.test.actual + "'");
+
+        logged_messages[msg.test.state][path] = m;
+
+        if (msg.test.state === 'ok')
           console.info(m);
         else
           console.warn(m);
         break;
+
       case 'report':
-        console.info("I received some report:");
-        console.info(JSON.stringify(msg['report']));
+        console.info("I received a final testsuite report:");
+
+        var success = countObjectAttributes(msg.report.success);
+        var failures = countObjectAttributes(msg.report.failure);
+
+        var printMessages = function (m) {
+          console.log("Successful:");
+          for (var m in logged_messages.ok)
+            console.log("  - " + logged_messages.ok[m]);
+          console.log("Failures:");
+          for (var m in logged_messages.failure)
+            console.log("  * " + logged_messages.failure[m]);
+          console.log("Warnings:");
+          for (var m in logged_messages.warning)
+            console.log("  ! " + logged_messages.warning[m]);
+        };
+
+        if (success === 0 && failures === 0) {
+          console.log("This report does not contain any test results.");
+          console.log("Hence it claims, no test has been run.");
+
+        } else if (success === 0 && failures !== 0) {
+          console.error("All tests failed (" + failures + " failed, 0 ok)");
+          console.error("One error was: " +
+            logged_messages.failure[randomAttribute(logged_messages.failure)]);
+
+        } else if (success !== 0 && failures === 0) {
+          console.log("All tests succeeded :)");
+          console.log("For example this means the following features were successful:");
+          for (var feature in msg.report.success)
+            console.log("  * " + feature);
+
+        } else if (success !== 0 && failures !== 0) {
+          console.log("Some tests succeeded, some failed.");
+
+          printMessages();
+
+          if (successful_features.length !== 0) {
+            console.log("The following features have been run completely successfully:");
+            // TODO
+          }
+        }
 
         if (msg['report']['ok'])
           resolve("Testsuite terminated successfully");
