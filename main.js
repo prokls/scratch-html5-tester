@@ -55,6 +55,11 @@ new Yadda.FeatureFileSearch('./test/features').each(function(file) {
       if (library.beforeScenario)
         before(library.beforeScenario);
       steps(scenario.steps, function(step, done) {
+        var info_stack = {
+          'feature': feature.title,
+          'scenario': scenario.title,
+          'step': step
+        };
         yadda.yadda(step, done);
       });
       if (library.afterScenario)
