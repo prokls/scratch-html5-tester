@@ -74,12 +74,27 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       console.info("console output: " + msg);
   };
 
-  var logged_messages = { 'failure' : {}, 'ok' : {}, 'warn' : {} };
-
   page.onCallback = function (msg) {
 
+    // setup logging
+    var fs = phantom.createFilesystem();
+    var c = fs.open('config.js', {'mode': 'r'}); // TODO: overridability with CLI arguments
+    var config = JSON.parse(c.read());
+    c.close();
+
+    var logfile = fs.open(config.log_path, {'mode': 'a'});
+    var lwrite = function (m) { logfile.writeLine(m); logfile.flush(); };
+    var lend = function () { logfile.flush(); logfile.close(); };
+    var info = function (m) { console.info(m); lwrite(m); };
+    var log = function (m) { console.log(m); lwrite(m); };
+    var error = function (m) { console.error(m); lwrite(m); };
+    var warn = function (m) { console.warn(m); lwrite(m); };
+
+    // error: unknown type
     if (typeof msg['type'] === 'undefined') {
       var err = 'Invalid message received: ' + JSON.stringify(msg);
+      lwrite(err);
+      lend();
       throw new Error(err);
     }
 
@@ -111,65 +126,80 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
               + msg.test.expected + '" and this '
               + (msg.test.ok ? 'fine' : "'" + msg.test.actual + "'");
 
-        logged_messages[msg.test.state][path] = m;
+        log("[[" + msg.test.state + "]] ");
 
         if (msg.test.state === 'ok')
-          console.info(m);
+          info(m);
         else
-          console.warn(m);
+          warn(m);
         break;
 
       case 'report':
-        console.info("I received a final testsuite report:");
+        info("I received a final testsuite report:");
 
-        var success = countObjectAttributes(msg.report.success);
-        var failures = countObjectAttributes(msg.report.failure);
+        logfile.flush();
+        var logf = fs.open(config.log_path, {'mode': 'r'});
+        var success = 0, failures = 0, line = null;
+        while (!logf.atEnd()) {
+          var line = logf.readLine();
+          if (line.trim() === '[[failure]]') failures++;
+          if (line.trim() === '[[ok]]') success++;
+        }
+        logf.close();
 
-        var printMessages = function (m) {
-          console.log("Successful:");
+        //var success = countObjectAttributes(logged_messages.success);
+        //var failures = countObjectAttributes(logged_messages.failure);
+
+        var printMessages = function () {
+          log("Successful:");
           for (var m in logged_messages.ok)
-            console.log("  - " + logged_messages.ok[m]);
-          console.log("Failures:");
+            log("  - " + logged_messages.ok[m]);
+          log("Failures:");
           for (var m in logged_messages.failure)
-            console.log("  * " + logged_messages.failure[m]);
-          console.log("Warnings:");
+            log("  * " + logged_messages.failure[m]);
+          log("Warnings:");
           for (var m in logged_messages.warning)
-            console.log("  ! " + logged_messages.warning[m]);
+            log("  ! " + logged_messages.warning[m]);
         };
 
         if (success === 0 && failures === 0) {
-          console.log("This report does not contain any test results.");
-          console.log("Hence it claims, no test has been run.");
+          log("This report does not contain any test results.");
+          log("Hence it claims, no test has been run.");
 
         } else if (success === 0 && failures !== 0) {
-          console.error("All tests failed (" + failures + " failed, 0 ok)");
-          console.error("One error was: " +
-            logged_messages.failure[randomAttribute(logged_messages.failure)]);
+          error("All tests failed (" + failures + " failed, 0 ok)");
+          //error("One error was: " +
+          //  logged_messages.failure[randomAttribute(logged_messages.failure)]);
 
         } else if (success !== 0 && failures === 0) {
-          console.log("All tests succeeded :)");
-          console.log("For example this means the following features were successful:");
-          for (var feature in msg.report.success)
-            console.log("  * " + feature);
+          log("All tests succeeded :)");
+          //log("For example this means the following features were successful:");
+          //for (var feature in msg.report)
+          //  log("  * " + feature);
 
         } else if (success !== 0 && failures !== 0) {
-          console.log("Some tests succeeded, some failed.");
+          log("Some tests succeeded, some failed.");
 
-          printMessages();
+          //printMessages();
 
-          if (successful_features.length !== 0) {
-            console.log("The following features have been run completely successfully:");
+          /*if (successful_features.length !== 0) {
+            log("The following features have been run completely successfully:");
             // TODO
-          }
+          }*/
         }
 
         if (msg['report']['ok'])
           resolve("Testsuite terminated successfully");
         else
-          reject(new Error("Testsuite failed"));
+          reject(new Error("Testsuite failed: " + msg.report.errors[0]));
+
+        logfile.close();
         break;
       default:
-        throw new Error("Unknown message type received: " + msg['type']);
+        var errmsg = "Unknown message type received: " + msg['type'];
+        logfile.writeLine(errmsg);
+        logfile.close();
+        throw new Error(errmsg);
     }
   };
 
