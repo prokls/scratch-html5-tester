@@ -78,7 +78,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
 
     // setup logging
     var fs = phantom.createFilesystem();
-    var c = fs.open('config.js', {'mode': 'r'}); // TODO: overridability with CLI arguments
+    var c = fs.open('config.json', {'mode': 'r'}); // TODO: overridability with CLI arguments
     var config = JSON.parse(c.read());
     c.close();
 
@@ -126,7 +126,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
               + msg.test.expected + '" and this '
               + (msg.test.ok ? 'fine' : "'" + msg.test.actual + "'");
 
-        log("[[" + msg.test.state + "]] ");
+        log("level:" + msg.test.state);
 
         if (msg.test.state === 'ok')
           info(m);
@@ -134,67 +134,10 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
           warn(m);
         break;
 
-      case 'report':
-        info("I received a final testsuite report:");
-
-        logfile.flush();
-        var logf = fs.open(config.log_path, {'mode': 'r'});
-        var success = 0, failures = 0, line = null;
-        while (!logf.atEnd()) {
-          var line = logf.readLine();
-          if (line.trim() === '[[failure]]') failures++;
-          if (line.trim() === '[[ok]]') success++;
-        }
-        logf.close();
-
-        //var success = countObjectAttributes(logged_messages.success);
-        //var failures = countObjectAttributes(logged_messages.failure);
-
-        var printMessages = function () {
-          log("Successful:");
-          for (var m in logged_messages.ok)
-            log("  - " + logged_messages.ok[m]);
-          log("Failures:");
-          for (var m in logged_messages.failure)
-            log("  * " + logged_messages.failure[m]);
-          log("Warnings:");
-          for (var m in logged_messages.warning)
-            log("  ! " + logged_messages.warning[m]);
-        };
-
-        if (success === 0 && failures === 0) {
-          log("This report does not contain any test results.");
-          log("Hence it claims, no test has been run.");
-
-        } else if (success === 0 && failures !== 0) {
-          error("All tests failed (" + failures + " failed, 0 ok)");
-          //error("One error was: " +
-          //  logged_messages.failure[randomAttribute(logged_messages.failure)]);
-
-        } else if (success !== 0 && failures === 0) {
-          log("All tests succeeded :)");
-          //log("For example this means the following features were successful:");
-          //for (var feature in msg.report)
-          //  log("  * " + feature);
-
-        } else if (success !== 0 && failures !== 0) {
-          log("Some tests succeeded, some failed.");
-
-          //printMessages();
-
-          /*if (successful_features.length !== 0) {
-            log("The following features have been run completely successfully:");
-            // TODO
-          }*/
-        }
-
-        if (msg['report']['ok'])
-          resolve("Testsuite terminated successfully");
-        else
-          reject(new Error("Testsuite failed: " + msg.report.errors[0]));
-
-        logfile.close();
+      case 'finish':
+        resolve("Testsuite terminated.");
         break;
+
       default:
         var errmsg = "Unknown message type received: " + msg['type'];
         logfile.writeLine(errmsg);
