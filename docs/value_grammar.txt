@@ -1,0 +1,48 @@
+// shape: input is either <round_value>, <square_value>, <angle_value>, <touchable>, ...
+
+<round_value> := "(" (<square_value> | <boolean> | <number>) ")"
+<square_value> := "[" (<round_value> | <boolean>) "]"
+<angle_value> := "<" <boolean> ">"
+
+<touchable> := "mouse-pointer" | "edge" | <sprite> | <round_value> | <square_value> | <angle_value>
+<object> := "mouse-pointer" | <sprite> | <round_value> | <square_value> | <angle_value>
+<costume_any> := <costume> | <round_value> | <square_value> | <angle_value>
+<switch_backdrop> := "next backdrop" | "previous backdrop" | <backdrop>
+<video_state> := "on" | "off" | "on-flipped"
+<sprite_property> := "x position" | "y position" | "direction" | "costume #" | "costume name" | "size" | "volume"
+<stage_sprite_any> := "Stage" | <sprite> | <round_value> | <square_value> | <angle_value>
+<datetime> := "year" | "month" | "date" | "day of week" | "hour" | "minute" | "second"
+<math_operation> := "abs" | "floor" | "ceiling" | "sqrt" | "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "ln" | "log" | "e ^" | "10 ^"
+<rotation_style> := "left-right" | "don't rotate" | "all around"
+<color_effect> := "color" | "fisheye" | "whirl" | "pixelate" | "mosaic" | "brightness" | "ghost"
+<drum> := [1-9] | 1[0-8]
+<note> := 4[89] | 5[0-9] | 6[0-9] | 7[012]
+<instrument> := [1-9] | 1[0-9] | 2[12]
+<clone> := "myself" | <sprite> | <round_value> | <square_value> | <angle_value>
+<sensors> := "loudness" | "timer" | "video motion"
+<message> := "[message" <charseq> "]"
+<backdrop> := "[backdrop" <charseq> "]"
+<script> := "all" | "this script" | "other scripts in sprite"
+<variable_name> := "[variable " <charseq> "]"
+<key> := <button>
+<direction> := "(90) right" | "(-90) left" | "(0) up" | "(180) down" | <round_value> | <square_value> | <angle_value>
+
+
+
+
+// primitives
+
+<charseq> := [^)\]}]*
+<constant_string> := "(" ("answer" | "backdrop name" | "costume name" | "username") ")"
+<constant_number> := "(" ("x position" | "y position" | "direction" | "costume #" | "size" | "volume" | "tempo" | "loudness" | "timer" | "days since 2000") ")"
+<video_number> := "(video" <video_property> "on" <video_source> ")"
+<video_property> := "motion" | "direction"
+<video_source> := "this sprite" | "Stage"
+<text> := "'" [^']* "'"
+<number> := [-.e0-9]* | <constant_number> | <video_number>
+<string> := <text> | <constant_string>
+<sprite> := "Sprite" <charseq>
+<costume> := "costume " <charseq>
+<hexcolor> := "#" [0-9A-F]{6}
+<button> := (("up" | "down" | "left" | "right") "arrow" | "space" | [a-z0-9])
+<boolean> := "<" ( "touching" ("mouse-pointer" | "edge" | <spritename>) | "touching color" <hexcolor> "?" | "color" <hexcolor> "is touching" <hexcolor> "?" | "key" <key> "pressed?" | "mouse down?" | <value> "<" <value> | <value> "=" <value> | <value> ">" <value> | "not" <boolean> | <boolean> "or" <boolean> | <boolean> "and" <boolean> ) ">"
