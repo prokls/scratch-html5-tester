@@ -112,17 +112,18 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
     switch (msgtype) {
       case 'action':
         if (msg['action'][0] === 'screenshot') {
-          var suffix = (msg['action'].length > 1)
+          var suffix = (msg['action'][1])
                           ? ("" + msg['action'][1])
                           : ("" + Date.now());
           page.render('screenshot-' + suffix + '.png');
+
         } else if (userInputEventKeys.indexOf(msg['action'][0]) >= 0) {
-		  if(msg['action'][0] === "mousemove") {
-			page.sendEvent(msg['action'][0], msg['action'][1], msg['action'][2]);
-		  }
-		  else
-		    page.sendEvent(msg['action']);
-	    }
+          if (msg['action'][0] === "mousemove") {
+            page.sendEvent(msg['action'][0], msg['action'][1], msg['action'][2]);
+          } else {
+            page.sendEvent(msg['action']);
+          }
+        }
         break;
 
       case 'test':
@@ -354,7 +355,7 @@ module.exports = (function() {
     .when("using $sprite", function (sprite, next) { test.setCurrentSprite(sprite); next(); })
     .when("user points to sprite $sprite", function (sprite, next) { test.addWhen(["userPointToSprite", sprite]); next(); })
     .when("user clicks", function (next) { test.addWhen(["userClick"]); next(); })
-    .when("make screenshot", function (next) { test.addWhen(["userScreenshot"]); next(); })
+    .when("make screenshot( '.*?')?", function (screenshot_name, next) { test.addWhen(["userScreenshot", screenshot_name]); next(); })
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
       test.addThen(['position', costume, sprite, parseInt(xpos), parseInt(ypos)]);
