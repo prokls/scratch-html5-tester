@@ -246,6 +246,7 @@ module.exports = (function() {
     .when("when green flag clicked", function (next) { test.addWhen(['whenGreenFlag']); next(); })
     //.when("block (\w+) is run", function (blockname, next) { test.addWhen(['blockRun', blockname]); next(); })
     //.when("$sprite is clicked", function (spr, next) { test.addWhen(['whenClicked', spr]); next(); }) // custom
+    //keyPress feature is not supported in Scratch HTML5 (May 12 2015)
     .when("when $key key pressed", function (key, next) { test.addWhen(['whenKeyPressed', key]); next(); })
     .when("when this sprite clicked", function (next) { test.addWhen(['whenClicked']); next(); })
     .when("when backdrop switches to $backdrop", function (backdrop, next) { test.addWhen(['whenSceneStarts'], backdrop); next(); })
@@ -253,6 +254,7 @@ module.exports = (function() {
     .when('when I receive "$text"', function (text, next) { test.addWhen(['whenIReceive', text]); next(); })
     .when('broadcast "$text"', function (text, next) { test.addWhen(['broadcast:', text]); next(); })
     .when('broadcast "$text" and wait', function (text, next) { test.addWhen(['doBroadcastAndWait', text]); next(); })
+    //clone feature is not supported in Scratch HTML5 (May 12 2015)
     .when("when I start as a clone", function (next) { test.addWhen(['whenCloned']); next(); })
     .when("if $cond then", function (cond, next) { test.addWhen(['doIf', cond]); next(); }) // TODO: $cond
     .when("repeat $times", function (times, next) { test.addWhen(['doRepeat', parseInt(times)]); next(); })
@@ -355,6 +357,8 @@ module.exports = (function() {
     .when("using $sprite", function (sprite, next) { test.setCurrentSprite(sprite); next(); })
     .when("user points to sprite $sprite", function (sprite, next) { test.addWhen(["userPointToSprite", sprite]); next(); })
     .when("user clicks", function (next) { test.addWhen(["userClick"]); next(); })
+    //keyPress feature is not supported in Scratch HTML5 (May 12 2015)
+    .when("user presses $key", function (key, next) { test.addWhen(["userPress", key]); next(); })
     .when("make screenshot( '.*?')?", function (screenshot_name, next) { test.addWhen(["userScreenshot", screenshot_name]); next(); })
 
     .then("costume $costume of sprite $sprite is at x:$xpos y:$ypos", function (costume, sprite, xpos, ypos, next) {
