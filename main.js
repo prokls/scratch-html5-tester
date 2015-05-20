@@ -82,7 +82,7 @@ function teardown() {
     log.info("Hence it claims, no test has been run.");
 
   } else if (success === 0 && failures !== 0) {
-    log.error("All tests failed (" + failures + " failed, 0 ok)");
+    log.error("All tests failed ☣ (" + failures + " failed, 0 ok)");
     //log.error("One error was: " +
     //  logged_messages.failure[randomAttribute(logged_messages.failure)]);
 
@@ -93,7 +93,7 @@ function teardown() {
     //  log.info("  * " + feature);
 
   } else if (success !== 0 && failures !== 0) {
-    log.info("Some tests succeeded, some failed.");
+    log.info("Some tests succeeded, some failed. ♿");
 
     //printMessages();
 

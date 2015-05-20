@@ -125,8 +125,8 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
       case 'test':
         var path = 'feature? scenario? check?';  // TODO
         var m = path + ": I expected that '" + msg.test.what + "' '"
-              + msg.test.expected + '" and this '
-              + (msg.test.ok ? 'fine' : "'" + msg.test.actual + "'");
+              + msg.test.expected + '" and this is '
+              + (msg.test.state === 'ok' ? 'fine' : "'" + msg.test.actual + "'") + ".";
 
         log("level:" + msg.test.state);
 
@@ -374,7 +374,11 @@ module.exports = (function() {
       next();
     })
     .then("backdrop $sprite is visible", function (sprite, next) {
-      test.addThen(['sprite_visible', sprite]);
+      test.addThen(['backdrop_visible', sprite, true]);
+      next();
+    })
+    .then("backdrop $sprite is hidden", function (sprite, next) {
+      test.addThen(['backdrop_visible', sprite, false]);
       next();
     })
     .then("sprite $sprite is hidden", function (sprite, next) {
