@@ -118,7 +118,7 @@ function run_phridge(rootpath, projectbasepath, testcase, resolve, reject) {
           page.render('screenshot-' + suffix + '.png');
 
         } else if (userInputEventKeys.indexOf(msg['action'][0]) >= 0) {
-		  page.sendEvent.apply(this, msg['action']);
+          page.sendEvent.apply(this, msg['action']);
         }
         break;
 
